@@ -1598,6 +1598,35 @@ header::before {
   .media-grid { grid-template-columns:1fr 1fr; }
 }
 
+/* ══════════════════════════
+   ASESORÍA PRESENCIAL — SUCURSALES (Calendly embebido)
+══════════════════════════ */
+.asesoria-loc-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:22px;
+}
+.asesoria-loc-card {
+  background:var(--white); border-radius:var(--radius); border:1px solid var(--border);
+  box-shadow:var(--shadow-sm); overflow:hidden;
+}
+.asesoria-loc-head {
+  display:flex; align-items:center; gap:12px; padding:16px 18px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dark)); color:#fff;
+}
+.asesoria-loc-head--alt { background:linear-gradient(135deg,var(--navy),var(--navy-light)); }
+.asesoria-loc-pin { font-size:1.3rem; flex-shrink:0; }
+.asesoria-loc-title { font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:700; line-height:1.1; }
+.asesoria-loc-sub { font-size:0.7rem; letter-spacing:1px; text-transform:uppercase; opacity:0.85; }
+.asesoria-next-dates {
+  text-align:center; margin-top:24px; padding:14px; border-radius:12px;
+  background:rgba(200,39,46,0.06); border:1px solid rgba(200,39,46,0.18);
+  font-size:0.85rem; color:var(--navy);
+}
+.asesoria-next-dates strong { color:var(--gold-dark); }
+
+@media (max-width:768px) {
+  .asesoria-loc-grid { grid-template-columns:1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -2146,29 +2175,49 @@ header::before {
     <div class="module-icon">🤝</div>
     <div>
       <h2>Asesoría Presencial</h2>
-      <p>Próximamente en tu sucursal</p>
+      <p>Elige tu sucursal y reserva tu horario</p>
     </div>
   </div>
 
   <div class="areas-banner" style="margin-bottom:28px">
     <div class="areas-banner-icon">📍</div>
     <div>
-      <div class="areas-banner-title">¡Muy pronto estaremos en tu sucursal!</div>
-      <div class="areas-banner-sub">Podrás recibir asesoría personalizada, cara a cara, con uno de nuestros especialistas. Contaremos con <strong>7 espacios disponibles por día</strong>, así que te recomendamos ir agendando tu lugar desde ahora para asegurar tu cupo.</div>
+      <div class="areas-banner-title">Sesiones presenciales cada mes</div>
+      <div class="areas-banner-sub">Recibe asesoría personalizada, cara a cara, con uno de nuestros especialistas. Elige la sucursal que te quede mejor y reserva tu horario — te llegará la confirmación por correo.</div>
     </div>
     <div class="areas-banner-badge">Nuevo</div>
   </div>
 
-  <div class="card">
-    <div class="card-body" style="text-align:center;padding:44px 28px">
-      <div style="font-size:2.4rem;margin-bottom:14px">🗓️</div>
-      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--navy);margin-bottom:10px">Aparta tu espacio con anticipación</h3>
-      <p style="color:var(--text-light);font-size:0.88rem;line-height:1.6;max-width:520px;margin:0 auto 24px">
-        Cupo limitado a 7 personas por día. Da clic en el botón para reservar tu lugar y en breve un asesor te confirmará el día y la sucursal exacta de tu visita.
-      </p>
-      <a class="btn btn-primary" href="https://wa.me/5219845565481?text=Hola%2C%20quiero%20agendar%20mi%20espacio%20para%20la%20asesor%C3%ADa%20presencial%20en%20mi%20sucursal." target="_blank" style="text-decoration:none;display:inline-block">📅 Agendar mi espacio</a>
+  <div class="asesoria-loc-grid">
+    <div class="asesoria-loc-card">
+      <div class="asesoria-loc-head">
+        <div class="asesoria-loc-pin">📍</div>
+        <div>
+          <div class="asesoria-loc-title">Reforma 99</div>
+          <div class="asesoria-loc-sub">CDMX</div>
+        </div>
+      </div>
+      <!-- TODO Mariel: sustituir data-url por el link real del event type de Reforma 99 -->
+      <div class="calendly-inline-widget" data-url="https://calendly.com/manglecapital/30min" style="min-width:280px;height:650px;"></div>
+    </div>
+
+    <div class="asesoria-loc-card">
+      <div class="asesoria-loc-head asesoria-loc-head--alt">
+        <div class="asesoria-loc-pin">📍</div>
+        <div>
+          <div class="asesoria-loc-title">Reforma 93</div>
+          <div class="asesoria-loc-sub">CDMX</div>
+        </div>
+      </div>
+      <!-- TODO Mariel: sustituir data-url por el link real del event type de Reforma 93 -->
+      <div class="calendly-inline-widget" data-url="https://calendly.com/manglecapital/asesoria-presencial-reforma-99-clon" style="min-width:280px;height:650px;"></div>
     </div>
   </div>
+
+  <div class="asesoria-next-dates">
+    🗓️ Próximas fechas: <strong>10 y 12 de noviembre</strong>
+  </div>
+
 </div>
 
 <!-- ═══ MÓDULO: CONTÁCTANOS ═══ -->
