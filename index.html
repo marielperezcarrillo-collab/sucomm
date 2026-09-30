@@ -1599,7 +1599,7 @@ header::before {
 }
 
 /* ══════════════════════════
-   ASESORÍA PRESENCIAL — SUCURSALES (Calendly embebido)
+   ASESORÍA PRESENCIAL — SUCURSALES
 ══════════════════════════ */
 .asesoria-loc-grid {
   display:grid; grid-template-columns:1fr 1fr; gap:22px;
@@ -1616,15 +1616,23 @@ header::before {
 .asesoria-loc-pin { font-size:1.3rem; flex-shrink:0; }
 .asesoria-loc-title { font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:700; line-height:1.1; }
 .asesoria-loc-sub { font-size:0.7rem; letter-spacing:1px; text-transform:uppercase; opacity:0.85; }
-.asesoria-next-dates {
-  text-align:center; margin-top:24px; padding:14px; border-radius:12px;
-  background:rgba(200,39,46,0.06); border:1px solid rgba(200,39,46,0.18);
-  font-size:0.85rem; color:var(--navy);
+.asesoria-loc-body {
+  padding:28px 18px; text-align:center;
 }
-.asesoria-next-dates strong { color:var(--gold-dark); }
+.asesoria-loc-date {
+  font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:700;
+  color:var(--navy); line-height:1.1; margin-bottom:8px; text-transform:capitalize;
+}
+.asesoria-loc-time {
+  font-size:0.95rem; font-weight:600; color:var(--gold-dark);
+}
+.asesoria-cta-wrap {
+  text-align:center; margin-top:28px;
+}
 
 @media (max-width:768px) {
   .asesoria-loc-grid { grid-template-columns:1fr; }
+  .asesoria-loc-date { font-size:1.6rem; }
 }
 
 </style>
@@ -2175,15 +2183,15 @@ header::before {
     <div class="module-icon">🤝</div>
     <div>
       <h2>Asesoría Presencial</h2>
-      <p>Elige tu sucursal y reserva tu horario</p>
+      <p>Fechas y horarios en CDMX este mes</p>
     </div>
   </div>
 
   <div class="areas-banner" style="margin-bottom:28px">
     <div class="areas-banner-icon">📍</div>
     <div>
-      <div class="areas-banner-title">Sesiones presenciales cada mes</div>
-      <div class="areas-banner-sub">Recibe asesoría personalizada, cara a cara, con uno de nuestros especialistas. Elige la sucursal que te quede mejor y reserva tu horario — te llegará la confirmación por correo.</div>
+      <div class="areas-banner-title">Estaremos en CDMX</div>
+      <div class="areas-banner-sub">Recibe asesoría personalizada, cara a cara, con uno de nuestros especialistas. Si quieres cotizar y que te lo expliquen ahí mismo, puedes solicitarlo con anticipación.</div>
     </div>
     <div class="areas-banner-badge">Nuevo</div>
   </div>
@@ -2197,7 +2205,10 @@ header::before {
           <div class="asesoria-loc-sub">CDMX</div>
         </div>
       </div>
-      <div class="calendly-inline-widget" data-url="https://calendly.com/manglecapital/reforma99" style="min-width:280px;height:650px;"></div>
+      <div class="asesoria-loc-body">
+        <div class="asesoria-loc-date">13 de octubre</div>
+        <div class="asesoria-loc-time">🕐 12:00 pm – 4:00 pm</div>
+      </div>
     </div>
 
     <div class="asesoria-loc-card">
@@ -2208,12 +2219,15 @@ header::before {
           <div class="asesoria-loc-sub">CDMX</div>
         </div>
       </div>
-      <div class="calendly-inline-widget" data-url="https://calendly.com/manglecapital/reforma93" style="min-width:280px;height:650px;"></div>
+      <div class="asesoria-loc-body">
+        <div class="asesoria-loc-date">15 de octubre</div>
+        <div class="asesoria-loc-time">🕐 12:00 pm – 4:00 pm</div>
+      </div>
     </div>
   </div>
 
-  <div class="asesoria-next-dates">
-    🗓️ Próximas fechas: <strong>10 y 12 de noviembre</strong>
+  <div class="asesoria-cta-wrap">
+    <a class="btn btn-primary" href="https://wa.me/529845565481?text=Hola%2C%20me%20interesa%20agendar%20una%20asesor%C3%ADa%20presencial%20en%20CDMX%20(Reforma%2099%20el%2013%20de%20octubre%20o%20Reforma%2093%20el%2015%20de%20octubre)." target="_blank">💬 Solicitar con anticipación</a>
   </div>
 
 </div>
@@ -2232,7 +2246,7 @@ header::before {
       <div class="contact-icon">✉️</div>
       <div><div class="contact-label">Correo electrónico</div><div class="contact-value">manglecapital@gmail.com</div></div>
     </a>
-    <a class="contact-card" href="https://wa.me/5219845565481" target="_blank">
+    <a class="contact-card" href="https://wa.me/529845565481" target="_blank">
       <div class="contact-icon">💬</div>
       <div><div class="contact-label">WhatsApp</div><div class="contact-value">+52 1 984 556 5481</div></div>
     </a>
@@ -2657,7 +2671,7 @@ header::before {
 </main>
 
 <!-- WhatsApp float button -->
-<a href="https://wa.me/5219845565481" target="_blank" class="wa-float" title="Contactar por WhatsApp">💬</a>
+<a href="https://wa.me/529845565481" target="_blank" class="wa-float" title="Contactar por WhatsApp">💬</a>
 
 <script>
 
