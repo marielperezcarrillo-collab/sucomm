@@ -1635,9 +1635,44 @@ header::before {
   .asesoria-loc-date { font-size:1.6rem; }
 }
 
+/* ═══ SELECCIÓN DE CIUDAD ═══ */
+.city-gate{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto;
+  background:radial-gradient(ellipse 90% 120% at 50% -30%, #4a1518 0%, transparent 60%),linear-gradient(150deg,#220909 0%,#190707 55%,#2a0c0c 100%);}
+.city-gate.hidden{display:none}
+.city-gate-inner{width:100%;max-width:560px;text-align:center}
+.city-gate h1{font-family:'DM Sans',sans-serif;font-weight:600;font-size:clamp(1.4rem,4vw,2rem);letter-spacing:8px;color:var(--gold-light);text-transform:uppercase}
+.city-gate .gold-ornament{margin:12px auto 8px}
+.city-gate .city-sub{font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:34px}
+.city-gate h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.7rem;color:#fff;margin-bottom:22px}
+.city-options{display:flex;flex-direction:column;gap:12px}
+.city-btn{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:18px 22px;border-radius:14px;cursor:pointer;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(226,88,92,0.35);color:#fff;font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;transition:all .2s}
+.city-btn:hover,.city-btn:focus-visible{background:var(--gold);border-color:var(--gold-light);transform:translateY(-2px);box-shadow:0 10px 28px rgba(200,39,46,0.35);outline:none}
+.city-btn span.pin{font-size:1.2rem}
+.city-btn span.arrow{opacity:.6;font-size:1.3rem}
+.city-chip{display:none;align-items:center;gap:8px;margin-top:14px;padding:6px 8px 6px 14px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(226,88,92,0.35);color:#fff;font-size:0.78rem;letter-spacing:1px}
+.city-chip button{background:var(--gold);color:#fff;border:0;border-radius:999px;padding:5px 12px;font-size:0.7rem;font-weight:600;letter-spacing:1px;cursor:pointer;font-family:inherit}
+.city-chip button:hover{background:var(--gold-light)}
+body.city-locked{overflow:hidden}
+.promo-empty{display:flex;align-items:center;justify-content:center;min-height:220px;text-align:center;padding:24px;color:var(--text-light);font-size:0.9rem;background:var(--gold-pale);border-radius:var(--radius)}
 </style>
 </head>
-<body>
+<body class="city-locked">
+
+<!-- Selección de ciudad -->
+<div id="cityGate" class="city-gate" role="dialog" aria-modal="true" aria-labelledby="cityGateTitle">
+  <div class="city-gate-inner">
+    <h1>Portal de Beneficios</h1>
+    <div class="gold-ornament"><div class="line l"></div><div class="diamond"></div><div class="line r"></div></div>
+    <p class="city-sub">Módulo Virtual</p>
+    <h2 id="cityGateTitle">¿En qué ciudad vives?</h2>
+    <div class="city-options">
+      <button class="city-btn" onclick="seleccionarCiudad('CDMX')"><span class="pin">📍</span><span>CDMX</span><span class="arrow">›</span></button>
+      <button class="city-btn" onclick="seleccionarCiudad('Guadalajara')"><span class="pin">📍</span><span>Guadalajara</span><span class="arrow">›</span></button>
+      <button class="city-btn" onclick="seleccionarCiudad('Tijuana')"><span class="pin">📍</span><span>Tijuana</span><span class="arrow">›</span></button>
+    </div>
+  </div>
+</div>
 
 <!-- Maintenance overlay -->
 <div id="maintenanceOverlay" class="maintenance-overlay">
@@ -1659,6 +1694,7 @@ header::before {
         <div class="line r"></div>
       </div>
       <p>Módulo Virtual</p>
+      <div class="city-chip" id="cityChip">📍 <span id="cityChipName"></span> <button type="button" onclick="cambiarCiudad()">Cambiar ciudad</button></div>
     </div>
   </div>
 </header>
@@ -2206,7 +2242,7 @@ header::before {
         </div>
       </div>
       <div class="asesoria-loc-body">
-        <div class="asesoria-loc-date">13 de octubre</div>
+        <div class="asesoria-loc-date">10 de noviembre</div>
         <div class="asesoria-loc-time">🕐 12:00 pm – 4:00 pm</div>
       </div>
     </div>
@@ -2220,7 +2256,7 @@ header::before {
         </div>
       </div>
       <div class="asesoria-loc-body">
-        <div class="asesoria-loc-date">15 de octubre</div>
+        <div class="asesoria-loc-date">12 de noviembre</div>
         <div class="asesoria-loc-time">🕐 12:00 pm – 4:00 pm</div>
       </div>
     </div>
@@ -2336,7 +2372,7 @@ header::before {
       </div>
       <p class="social-block-desc">Contenido profesional, consejos financieros y seguros de la mano de nuestros especialistas</p>
       <div class="social-cards">
-        <a href="https://www.instagram.com/mariel.perez.cf" target="_blank" class="social-card">
+        <a href="https://www.instagram.com/mariel.perez.c" target="_blank" class="social-card">
           <div class="social-logo">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs><linearGradient id="ig2" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#f09433"/><stop offset="50%" style="stop-color:#dc2743"/><stop offset="100%" style="stop-color:#bc1888"/></linearGradient></defs>
@@ -2347,7 +2383,7 @@ header::before {
           </div>
           <div class="social-info">
             <div class="social-name">Instagram</div>
-            <div class="social-handle">@mariel.perez.cf</div>
+            <div class="social-handle">@mariel.perez.c</div>
           </div>
           <div class="social-arrow">→</div>
         </a>
@@ -2364,7 +2400,7 @@ header::before {
           </div>
           <div class="social-arrow">→</div>
         </a>
-        <a href="https://www.tiktok.com/@mariel.perez.cf" target="_blank" class="social-card">
+        <a href="https://www.tiktok.com/@marielperez.c" target="_blank" class="social-card">
           <div class="social-logo">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <rect width="24" height="24" rx="5" fill="#010101"/>
@@ -2373,6 +2409,19 @@ header::before {
           </div>
           <div class="social-info">
             <div class="social-name">TikTok</div>
+            <div class="social-handle">@marielperez.c</div>
+          </div>
+          <div class="social-arrow">→</div>
+        </a>
+        <a href="https://www.facebook.com/mariel.perez.cf" target="_blank" class="social-card">
+          <div class="social-logo">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect width="24" height="24" rx="5" fill="#1877F2"/>
+              <path d="M16 8h-2a1 1 0 00-1 1v2h3l-.5 3H13v7h-3v-7H8v-3h2V9a4 4 0 014-4h2v3z" fill="white"/>
+            </svg>
+          </div>
+          <div class="social-info">
+            <div class="social-name">Facebook</div>
             <div class="social-handle">@mariel.perez.cf</div>
           </div>
           <div class="social-arrow">→</div>
@@ -2675,6 +2724,34 @@ header::before {
 
 <script>
 
+
+// ═══ SELECCIÓN DE CIUDAD ═══
+// CDMX y Tijuana comparten promociones; Guadalajara tiene las suyas.
+var CIUDAD_ACTUAL = '';
+var PROMOS_MONTH_GDL = [];   // pendiente: imágenes de Guadalajara (mismo formato {img:"data:..."})
+var PROMOS_YEAR_GDL  = [];   // pendiente: imágenes de Guadalajara (lista de "data:...")
+function getPromosMonth() { return CIUDAD_ACTUAL === 'Guadalajara' ? PROMOS_MONTH_GDL : PROMOS_MONTH; }
+function getPromosYear()  { return CIUDAD_ACTUAL === 'Guadalajara' ? PROMOS_YEAR_GDL  : PROMOS_YEAR; }
+
+function seleccionarCiudad(c) {
+  CIUDAD_ACTUAL = c;
+  promoMonthIndex = 0; promoYearIndex = 0;
+  var g = document.getElementById('cityGate');
+  if (g) g.classList.add('hidden');
+  document.body.classList.remove('city-locked');
+  var chip = document.getElementById('cityChipName');
+  if (chip) chip.textContent = c;
+  var bar = document.getElementById('cityChip');
+  if (bar) bar.style.display = 'inline-flex';
+  showModule('promociones');
+}
+function cambiarCiudad() {
+  var g = document.getElementById('cityGate');
+  if (g) g.classList.remove('hidden');
+  document.body.classList.add('city-locked');
+  try { window.scrollTo(0,0); } catch(e) {}
+}
+
 // ═══ PROMOCIONES DEL MES ═══
 var promoMonthIndex = 0;
 var promoMonthAutoTimer = null;
@@ -2692,17 +2769,18 @@ function renderPromosMonth() {
   var wrap = document.getElementById('promoMonthWrap');
   if (!track) return;
 
-  track.innerHTML = PROMOS_MONTH.map(function(p) {
+  if (!getPromosMonth().length) { track.innerHTML = '<div class="promo-slide promo-empty">Promociones de ' + CIUDAD_ACTUAL + ' próximamente</div>'; dots.innerHTML=''; dots.style.display='none'; var ar0 = wrap ? wrap.querySelectorAll('.promo-arrow') : []; ar0.forEach(function(a){a.style.display='none';}); track.style.transform='translateX(0)'; return; }
+  track.innerHTML = getPromosMonth().map(function(p) {
     return '<div class="promo-slide"><img src="' + p.img + '" alt="Promoción del mes"></div>';
   }).join('');
 
-  dots.innerHTML = PROMOS_MONTH.map(function(_, i) {
+  dots.innerHTML = getPromosMonth().map(function(_, i) {
     return '<div class="promo-dot' + (i === promoMonthIndex ? ' active' : '') + '" onclick="promoMonthGoTo(' + i + ')"></div>';
   }).join('');
 
   var arrows = wrap ? wrap.querySelectorAll('.promo-arrow') : [];
-  arrows.forEach(function(a) { a.style.display = PROMOS_MONTH.length > 1 ? 'flex' : 'none'; });
-  dots.style.display = PROMOS_MONTH.length > 1 ? 'flex' : 'none';
+  arrows.forEach(function(a) { a.style.display = getPromosMonth().length > 1 ? 'flex' : 'none'; });
+  dots.style.display = getPromosMonth().length > 1 ? 'flex' : 'none';
 
   promoMonthUpdatePosition();
   promoMonthStartAuto();
@@ -2721,7 +2799,8 @@ function promoMonthUpdatePosition() {
 }
 
 function promoMonthMove(dir) {
-  promoMonthIndex = (promoMonthIndex + dir + PROMOS_MONTH.length) % PROMOS_MONTH.length;
+  var _n = getPromosMonth().length; if (!_n) return;
+  promoMonthIndex = (promoMonthIndex + dir + _n) % _n;
   promoMonthUpdatePosition();
   promoMonthStartAuto();
 }
@@ -2734,7 +2813,7 @@ function promoMonthGoTo(i) {
 
 function promoMonthStartAuto() {
   if (promoMonthAutoTimer) clearInterval(promoMonthAutoTimer);
-  if (PROMOS_MONTH.length <= 1) return;
+  if (getPromosMonth().length <= 1) return;
   promoMonthAutoTimer = setInterval(function() { promoMonthMove(1); }, 6000);
 }
 
@@ -2775,17 +2854,18 @@ function renderPromosYear() {
   var wrap = document.getElementById('promoYearWrap');
   if (!track) return;
 
-  track.innerHTML = PROMOS_YEAR.map(function(p) {
+  if (!getPromosYear().length) { track.innerHTML = '<div class="promo-slide promo-empty">Beneficios de ' + CIUDAD_ACTUAL + ' próximamente</div>'; dots.innerHTML=''; dots.style.display='none'; var ar1 = wrap ? wrap.querySelectorAll('.promo-arrow') : []; ar1.forEach(function(a){a.style.display='none';}); track.style.transform='translateX(0)'; return; }
+  track.innerHTML = getPromosYear().map(function(p) {
     return '<div class="promo-slide"><img src="' + p + '" alt="Promoción del año"></div>';
   }).join('');
 
-  dots.innerHTML = PROMOS_YEAR.map(function(_, i) {
+  dots.innerHTML = getPromosYear().map(function(_, i) {
     return '<div class="promo-dot' + (i === promoYearIndex ? ' active' : '') + '" onclick="promoYearGoTo(' + i + ')"></div>';
   }).join('');
 
   var arrows = wrap ? wrap.querySelectorAll('.promo-arrow') : [];
-  arrows.forEach(function(a) { a.style.display = PROMOS_YEAR.length > 1 ? 'flex' : 'none'; });
-  dots.style.display = PROMOS_YEAR.length > 1 ? 'flex' : 'none';
+  arrows.forEach(function(a) { a.style.display = getPromosYear().length > 1 ? 'flex' : 'none'; });
+  dots.style.display = getPromosYear().length > 1 ? 'flex' : 'none';
 
   promoYearUpdatePosition();
   promoYearStartAuto();
@@ -2804,7 +2884,8 @@ function promoYearUpdatePosition() {
 }
 
 function promoYearMove(dir) {
-  promoYearIndex = (promoYearIndex + dir + PROMOS_YEAR.length) % PROMOS_YEAR.length;
+  var _n = getPromosYear().length; if (!_n) return;
+  promoYearIndex = (promoYearIndex + dir + _n) % _n;
   promoYearUpdatePosition();
   promoYearStartAuto();
 }
@@ -2817,7 +2898,7 @@ function promoYearGoTo(i) {
 
 function promoYearStartAuto() {
   if (promoYearAutoTimer) clearInterval(promoYearAutoTimer);
-  if (PROMOS_YEAR.length <= 1) return;
+  if (getPromosYear().length <= 1) return;
   promoYearAutoTimer = setInterval(function() { promoYearMove(1); }, 6000);
 }
 
@@ -4894,6 +4975,7 @@ function printCotizacion(i) {
   main { padding:0 20px; }
   .card-body { padding:28px 24px; }
 }
+
 
 </style></head><body>
     <div class="hdr"><h1>COTIZADOR MANGLE CAPITAL</h1><p>SOLICITUD DE COTIZACIÓN · ${c.folio}</p></div>
