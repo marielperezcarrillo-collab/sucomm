@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Mangle Capital – Portal de Beneficios</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -1655,6 +1655,216 @@ header::before {
 .city-chip button:hover{background:var(--gold-light)}
 body.city-locked{overflow:hidden}
 .promo-empty{display:flex;align-items:center;justify-content:center;min-height:220px;text-align:center;padding:24px;color:var(--text-light);font-size:0.9rem;background:var(--gold-pale);border-radius:var(--radius)}
+/* ═══════════════════════════════════════════════════════════
+   REDISEÑO VISUAL (solo estilos · sin cambios de lógica)
+   Paleta SUCOMM: negro-guinda #190707 · rojo #c8272e · rojo suave #e2585c
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  --rd-ink:#12060a; --rd-ink2:#220a0d; --rd-red:#c8272e; --rd-red2:#e2585c; --rd-red3:#ff7b80;
+  --rd-paper:#fbf7f4; --rd-glass:rgba(255,255,255,.88); --rd-line:rgba(200,39,46,.14);
+  --rd-ease:cubic-bezier(.22,.8,.24,1);
+}
+html{ -webkit-text-size-adjust:100%; }
+body{ font-family:'DM Sans',sans-serif; }
+
+/* ── Fondo del cuerpo: papel cálido + resplandores rojos que flotan despacio ── */
+body{
+  background:
+    radial-gradient(900px 520px at 90% 8%, rgba(226,88,92,.10), transparent 60%),
+    radial-gradient(800px 480px at 4% 42%, rgba(200,39,46,.07), transparent 60%),
+    radial-gradient(700px 420px at 80% 92%, rgba(200,39,46,.06), transparent 60%),
+    linear-gradient(180deg,#fdfaf8 0%,#f9f3ef 100%) !important;
+}
+body::before,body::after{
+  content:'';position:fixed;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(70px);opacity:.55;will-change:transform;
+}
+body::before{width:46vmax;height:46vmax;right:-16vmax;top:18vh;background:radial-gradient(circle,rgba(226,88,92,.22),transparent 65%);animation:rdFloatA 26s ease-in-out infinite alternate;}
+body::after{width:40vmax;height:40vmax;left:-14vmax;bottom:-6vh;background:radial-gradient(circle,rgba(200,39,46,.16),transparent 65%);animation:rdFloatB 32s ease-in-out infinite alternate;}
+@keyframes rdFloatA{to{transform:translate3d(-6vmax,8vmax,0) scale(1.15)}}
+@keyframes rdFloatB{to{transform:translate3d(8vmax,-7vmax,0) scale(1.1)}}
+
+/* ── HERO oscuro con aurora en movimiento ── */
+header{
+  background:linear-gradient(160deg,#120508 0%,#1d0809 55%,#2a0c0e 100%) !important;
+  isolation:isolate;
+}
+header::before{
+  content:'';position:absolute;inset:-40% -20%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(38% 42% at 22% 38%, rgba(200,39,46,.55), transparent 70%),
+    radial-gradient(34% 40% at 78% 30%, rgba(255,123,128,.28), transparent 70%),
+    radial-gradient(40% 46% at 55% 85%, rgba(140,22,27,.55), transparent 70%) !important;
+  will-change:transform;animation:rdAurora 20s ease-in-out infinite alternate;
+}
+@keyframes rdAurora{0%{transform:translate3d(-4%,0,0) rotate(0deg) scale(1)}100%{transform:translate3d(5%,-4%,0) rotate(8deg) scale(1.12)}}
+header::after{opacity:.5}
+.header-inner{padding:54px 24px 40px !important}
+.header-title h1{
+  font-family:'DM Sans',sans-serif !important;font-weight:700 !important;
+  font-size:clamp(1.9rem,5.2vw,3.5rem) !important;letter-spacing:clamp(2px,.8vw,7px) !important;line-height:1.05;
+  background:linear-gradient(110deg,#fff 0%,#ffe3e3 40%,#ff9a9e 100%) !important;-webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;
+}
+.header-title p{letter-spacing:5px !important;color:rgba(255,255,255,.6) !important}
+.city-chip{background:rgba(255,255,255,.10) !important;border-color:rgba(255,255,255,.18) !important}
+
+/* ── MENÚ: píldora flotante de vidrio ── */
+.nav-wrap{background:transparent !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;top:10px;margin-top:-26px;padding:0 12px}
+.nav-inner{
+  background:rgba(20,6,9,.95);  border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:6px !important;gap:2px;
+  box-shadow:0 14px 34px rgba(18,6,10,.30),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.nav-tab{color:rgba(255,255,255,.66) !important;padding:11px 16px !important;border-radius:22px !important;border-bottom:0 !important;font-size:.66rem !important;transition:background .3s var(--rd-ease),color .3s,transform .3s var(--rd-ease)}
+.nav-tab:hover{background:rgba(255,255,255,.07);color:#fff !important;transform:translateY(-1px)}
+.nav-tab.active{background:linear-gradient(135deg,#d8303a,#a61c23) !important;color:#fff !important;box-shadow:0 8px 22px rgba(200,39,46,.45)}
+.nav-tab.active .tab-icon{filter:none !important}
+
+/* ── Encabezados de módulo ── */
+.module{padding-top:56px !important}
+.module-header{margin-bottom:34px !important}
+.module-icon{background:linear-gradient(135deg,#d8303a,#8c161b) !important;border:0 !important;border-radius:18px !important;box-shadow:0 12px 28px rgba(200,39,46,.35) !important;color:#fff}
+.module-header h2{font-family:'DM Sans',sans-serif !important;font-weight:700 !important;font-size:clamp(1.6rem,4vw,2.3rem) !important;letter-spacing:-.3px;color:var(--rd-ink) !important}
+.module-header p{font-size:.9rem !important}
+
+/* ── Tarjetas de vidrio ── */
+.card,.contact-card,.social-card,.asesoria-loc{
+  background:var(--rd-glass) !important;
+  border:1px solid rgba(255,255,255,.9) !important;
+  box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 14px 44px rgba(60,12,16,.10) !important;
+  transition:transform .45s var(--rd-ease),box-shadow .45s var(--rd-ease);
+}
+.card:hover,.contact-card:hover,.social-card:hover{transform:translateY(-4px);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 24px 60px rgba(200,39,46,.16) !important}
+
+/* ── Promociones ── */
+.promo-side-by-side{gap:36px !important}
+.promo-side-by-side h3{font-family:'DM Sans',sans-serif !important;font-weight:700 !important;font-size:1.25rem !important;letter-spacing:-.2px !important;color:var(--rd-ink) !important;position:relative;padding-left:14px}
+.promo-side-by-side h3::before{content:'';position:absolute;left:0;top:.2em;bottom:.2em;width:4px;border-radius:4px;background:linear-gradient(180deg,var(--rd-red2),var(--rd-red))}
+.promo-carousel-wrap{
+  border-radius:26px !important;border:1px solid rgba(200,39,46,.18);
+  box-shadow:0 16px 38px rgba(60,12,16,.20),0 0 0 6px rgba(255,255,255,.55) !important;
+  transition:transform .5s var(--rd-ease),box-shadow .5s var(--rd-ease);
+}
+.promo-carousel-wrap:hover{transform:translateY(-4px)}
+.promo-arrow{background:rgba(18,6,10,.7) !important;border:1px solid rgba(255,255,255,.25) !important;color:#fff !important;backdrop-filter:none !important}
+.promo-arrow:hover{background:var(--rd-red) !important;transform:translateY(-50%) scale(1.08)}
+.promo-dot{width:9px;height:9px;transition:all .35s var(--rd-ease)}
+.promo-dot.active{width:28px;border-radius:9px;transform:none !important}
+.promo-empty{border-radius:26px}
+
+/* ── Botones ── */
+.btn-primary,.btn.btn-primary{background:linear-gradient(135deg,#d8303a,#a61c23) !important;border:0 !important;box-shadow:0 12px 28px rgba(200,39,46,.38) !important;transition:transform .3s var(--rd-ease),box-shadow .3s !important}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(200,39,46,.5) !important}
+
+/* ── Banner SUCOMM ── */
+.sucomm-banner{border-radius:22px !important;overflow:hidden}
+
+/* ── Entrada suave al hacer scroll (solo opacidad/transform = ligero en celular) ── */
+.rv{opacity:0;transform:translate3d(0,22px,0);transition:opacity .7s var(--rd-ease),transform .7s var(--rd-ease)}
+.rv.rv-in{opacity:1;transform:none}
+
+/* ═══ PANTALLA DE CIUDAD ═══ */
+.city-gate{background:linear-gradient(160deg,#0e0407 0%,#1b0709 55%,#260a0c 100%) !important;isolation:isolate;overflow:hidden}
+.city-gate::before,.city-gate::after{content:'';position:absolute;z-index:-1;border-radius:50%;pointer-events:none;will-change:transform}
+.city-gate::before{width:60vmax;height:60vmax;left:-20vmax;top:-22vmax;background:radial-gradient(circle,rgba(200,39,46,.55),transparent 65%);animation:rdFloatA 18s ease-in-out infinite alternate}
+.city-gate::after{width:52vmax;height:52vmax;right:-18vmax;bottom:-22vmax;background:radial-gradient(circle,rgba(255,123,128,.30),transparent 65%);animation:rdFloatB 22s ease-in-out infinite alternate}
+.city-gate-inner{max-width:600px}
+.city-gate h1{font-family:'DM Sans',sans-serif !important;font-weight:700 !important;font-size:clamp(1.5rem,5vw,2.4rem) !important;letter-spacing:clamp(3px,1vw,8px) !important;color:#fff !important;animation:rdUp .8s var(--rd-ease) both}
+.city-gate .city-sub{animation:rdUp .8s .08s var(--rd-ease) both}
+.city-gate h2{font-family:'DM Sans',sans-serif !important;font-weight:700 !important;font-size:clamp(1.8rem,6vw,3rem) !important;line-height:1.08;letter-spacing:-.5px;margin:6px 0 30px !important;animation:rdUp .8s .16s var(--rd-ease) both}
+.city-gate h2 .hl{display:inline-block;padding:0 .28em .06em;border-radius:.3em;background:linear-gradient(135deg,#e2585c,#c8272e);color:#fff;transform:rotate(-1.5deg);box-shadow:0 10px 30px rgba(200,39,46,.5)}
+.city-options{gap:14px !important}
+.city-btn{
+  position:relative;overflow:hidden;padding:20px 24px !important;border-radius:20px !important;
+  background:rgba(255,255,255,.06) !important;border:1px solid rgba(255,255,255,.16) !important;
+  animation:rdUp .8s var(--rd-ease) both;transition:transform .4s var(--rd-ease),box-shadow .4s var(--rd-ease),background .3s,border-color .3s !important;
+}
+.city-btn:nth-child(1){animation-delay:.28s}.city-btn:nth-child(2){animation-delay:.36s}.city-btn:nth-child(3){animation-delay:.44s}
+.city-btn::after{content:'';position:absolute;top:0;left:-70%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);transform:skewX(-18deg);transition:left .7s var(--rd-ease)}
+.city-btn:hover,.city-btn:focus-visible{background:linear-gradient(135deg,#d8303a,#a61c23) !important;border-color:rgba(255,255,255,.4) !important;transform:translateY(-4px) scale(1.015) !important;box-shadow:0 22px 50px rgba(200,39,46,.5) !important}
+.city-btn:hover::after{left:130%}
+.city-btn span.arrow{transition:transform .35s var(--rd-ease)}
+.city-btn:hover span.arrow{transform:translateX(6px);opacity:1}
+@keyframes rdUp{from{opacity:0;transform:translate3d(0,18px,0)}to{opacity:1;transform:none}}
+
+/* ── Celular: menos desenfoque y movimiento más corto ── */
+@media (max-width:720px){
+  .nav-wrap{margin-top:-20px;padding:0 8px}
+  .nav-inner{flex-wrap:nowrap !important;justify-content:flex-start !important;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:24px}
+  .nav-inner::-webkit-scrollbar{display:none}
+  .nav-tab{padding:9px 11px !important;font-size:.6rem !important;letter-spacing:1px !important}
+  .nav-tab .tab-icon{font-size:.9rem}
+  .promo-side-by-side{gap:26px !important}
+  .promo-carousel-wrap:hover{transform:none}
+  .card,.contact-card,.social-card{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(255,255,255,.92) !important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .rv{opacity:1 !important;transform:none !important}
+}
+
+/* ═══════════════ MOVIMIENTO v2 (solo visual) ═══════════════ */
+/* 1 · Fondo vivo: manchas de color que se mezclan y cambian de tono */
+body::before,body::after{display:none !important}
+.rd-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;transition:opacity .8s}
+.rd-bg i{position:absolute;border-radius:50%;will-change:transform;opacity:.5}
+.rd-bg i:nth-child(1){width:52vmax;height:52vmax;left:-14vmax;top:-10vmax;background:radial-gradient(circle,#e2585c,transparent 66%);animation:rdB1 24s ease-in-out infinite alternate}
+.rd-bg i:nth-child(2){width:46vmax;height:46vmax;right:-14vmax;top:12vh;background:radial-gradient(circle,#ff9a8a,transparent 66%);animation:rdB2 30s ease-in-out infinite alternate}
+.rd-bg i:nth-child(3){width:50vmax;height:50vmax;left:18vw;bottom:-22vmax;background:radial-gradient(circle,#d8303a,transparent 66%);animation:rdB3 28s ease-in-out infinite alternate}
+.rd-bg i:nth-child(4){width:34vmax;height:34vmax;right:8vw;bottom:-8vmax;background:radial-gradient(circle,#f6c177,transparent 66%);animation:rdB4 34s ease-in-out infinite alternate;opacity:.32}
+@keyframes rdB1{to{transform:translate3d(14vmax,10vmax,0) scale(1.2)}}
+@keyframes rdB2{to{transform:translate3d(-12vmax,12vmax,0) scale(.9)}}
+@keyframes rdB3{to{transform:translate3d(16vmax,-10vmax,0) scale(1.18)}}
+@keyframes rdB4{to{transform:translate3d(-14vmax,-9vmax,0) scale(1.3)}}
+body.rd-calm .rd-bg{opacity:.55}
+
+/* 2 · Luz que sigue el cursor */
+.rd-cursor{position:fixed;left:0;top:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(226,88,92,.20),rgba(226,88,92,.07) 38%,transparent 68%);opacity:0;transition:opacity .4s;will-change:transform}
+body.rd-hasptr .rd-cursor{opacity:1}
+body.rd-calm .rd-cursor{opacity:.55}
+.card,.contact-card,.social-card,.asesoria-loc{
+  background:radial-gradient(260px circle at var(--x,50%) var(--y,-60%),rgba(226,88,92,.18),transparent 62%),var(--rd-glass) !important;
+}
+.city-btn{background:radial-gradient(240px circle at var(--x,50%) var(--y,-60%),rgba(255,255,255,.16),transparent 62%),rgba(255,255,255,.06) !important}
+.city-btn:hover,.city-btn:focus-visible{background:radial-gradient(240px circle at var(--x,50%) var(--y,50%),rgba(255,255,255,.28),transparent 62%),linear-gradient(135deg,#d8303a,#a61c23) !important}
+.nav-tab:not(.active){background:radial-gradient(90px circle at var(--x,50%) var(--y,-80%),rgba(226,88,92,.35),transparent 70%)}
+
+/* 3 · Partículas (canvas) */
+.rd-particles{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.city-gate .rd-particles{position:absolute;z-index:-1}
+body.rd-calm .rd-particles.rd-main{opacity:.35}
+
+/* 4 · Cinta en movimiento */
+.rd-ribbon{position:relative;left:50%;width:104vw;margin:30px 0 40px -52vw;transform:rotate(-1.4deg);overflow:hidden;padding:15px 0;background:#c8272e;box-shadow:0 10px 26px rgba(200,39,46,.30);contain:paint}
+.rd-ribbon::before{content:'';position:absolute;top:0;bottom:0;left:0;width:300%;background:linear-gradient(100deg,#b3141c 0%,#e2585c 16%,#c8272e 33%,#7d0f15 50%,#c8272e 66%,#e2585c 83%,#b3141c 100%);animation:rdRibbonSlide 16s ease-in-out infinite alternate;will-change:transform}
+.rd-ribbon-track{position:relative}
+.rd-ribbon-track{display:flex;width:max-content;animation:rdMarquee 32s linear infinite;will-change:transform}
+.rd-ribbon-track span{display:inline-flex;align-items:center;gap:26px;padding-right:26px;color:#fff;font-weight:700;font-size:clamp(.95rem,2.4vw,1.25rem);letter-spacing:.3px;white-space:nowrap}
+.rd-ribbon-track span::after{content:'✦';color:#ffe29a;font-size:1.05em}
+@keyframes rdMarquee{to{transform:translate3d(-50%,0,0)}}
+@keyframes rdRibbonSlide{to{transform:translate3d(-66.6%,0,0)}}
+
+/* 5 · Texto con degradado en movimiento */
+.rd-gt{background:linear-gradient(100deg,#c8272e 0%,#ff7b80 35%,#d8303a 65%,#8c161b 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:rdGT 6s ease-in-out infinite alternate}
+@keyframes rdGT{to{background-position:100% 0}}
+
+/* 6 · Progreso con brillo y paso activo que pulsa */
+.progress-bar-fill{position:relative;overflow:hidden}
+.progress-bar-fill::after{content:'';position:absolute;top:0;bottom:0;width:60px;left:-60px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:rdShimmer 2.2s ease-in-out infinite}
+@keyframes rdShimmer{to{left:110%}}
+.step-dot.active::before{animation:rdPulse 2s ease-out infinite}
+@keyframes rdPulse{0%{box-shadow:0 0 0 0 rgba(226,88,92,.65)}70%{box-shadow:0 0 0 10px rgba(226,88,92,0)}100%{box-shadow:0 0 0 0 rgba(226,88,92,0)}}
+.quiz-progress-fill{background:linear-gradient(90deg,#c8272e,#ff7b80,#c8272e) !important;background-size:200% 100%;animation:goldFlow 3s linear infinite}
+
+html,body{overflow-x:hidden;overflow-x:clip}
+@media (max-width:720px){
+  .rd-bg i:nth-child(4){display:none}
+  .rd-cursor{display:none}
+  .rd-ribbon{margin:26px 0 30px -52vw;padding:12px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  .rd-ribbon-track,.rd-ribbon,.rd-gt,.progress-bar-fill::after{animation:none !important}
+  .rd-particles,.rd-cursor{display:none !important}
+}
 </style>
 </head>
 <body class="city-locked">
@@ -1665,7 +1875,7 @@ body.city-locked{overflow:hidden}
     <h1>Portal de Beneficios</h1>
     <div class="gold-ornament"><div class="line l"></div><div class="diamond"></div><div class="line r"></div></div>
     <p class="city-sub">Módulo Virtual</p>
-    <h2 id="cityGateTitle">¿En qué ciudad vives?</h2>
+    <h2 id="cityGateTitle">¿En qué <span class="hl">ciudad</span> vives?</h2>
     <div class="city-options">
       <button class="city-btn" onclick="seleccionarCiudad('CDMX')"><span class="pin">📍</span><span>CDMX</span><span class="arrow">›</span></button>
       <button class="city-btn" onclick="seleccionarCiudad('Guadalajara')"><span class="pin">📍</span><span>Guadalajara</span><span class="arrow">›</span></button>
@@ -2720,6 +2930,103 @@ body.city-locked{overflow:hidden}
 </main>
 
 <!-- WhatsApp float button -->
+<script>
+/* Solo visual: animación de entrada al hacer scroll. No toca la lógica del portal. */
+document.addEventListener("DOMContentLoaded",function(){
+  try{
+    var sel='.module-header,.card,.promo-side-by-side > div,.contact-card,.social-block,.asesoria-loc,.sucomm-banner,.edu-tip-card';
+    var done=function(el){el.classList.add('rv-in')};
+    if(!('IntersectionObserver' in window)){return;}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){done(e.target);io.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -6% 0px'});
+    function scan(){document.querySelectorAll(sel).forEach(function(el){if(el.__rv)return;el.__rv=1;el.classList.add('rv');io.observe(el)})}
+    scan();
+    // Módulos que se muestran después (cambio de pestaña): reescanear
+    document.addEventListener('click',function(){setTimeout(scan,60)},true);
+    // Seguro: si algo no se revela, mostrarlo igual
+    setTimeout(function(){document.querySelectorAll('.rv:not(.rv-in)').forEach(function(el){var r=el.getBoundingClientRect();if(r.top<innerHeight*1.2)done(el)})},2500);
+  }catch(e){}
+});
+</script>
+
+<script>
+/* Movimiento visual v2: fondo vivo, luz de cursor, partículas, cinta, texto animado. No toca la lógica del portal. */
+document.addEventListener("DOMContentLoaded",function(){
+  try{
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var fine=window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches;
+    var mobile=window.innerWidth<720;
+    var body=document.body;
+
+    /* 1 · fondo vivo */
+    var bg=document.createElement('div');bg.className='rd-bg';bg.innerHTML='<i></i><i></i><i></i><i></i>';body.insertBefore(bg,body.firstChild);
+
+    /* 5 · última palabra de cada título de módulo con degradado animado */
+    document.querySelectorAll('.module-header h2').forEach(function(h){
+      if(h.children.length||h.__gt)return;h.__gt=1;
+      var t=h.textContent.trim().split(' ');if(t.length<2)return;
+      var last=t.pop();h.innerHTML=t.join(' ')+' <span class="rd-gt">'+last+'</span>';
+    });
+
+    /* 4 · cinta en movimiento (Promociones y Contáctanos) */
+    var words=['Seguros de vida','Retiro','Inversiones','Auto y moto','Gastos médicos','Hogar','Ahorro','Asesoría gratuita'];
+    function ribbon(){
+      var d=document.createElement('div');d.className='rd-ribbon';d.setAttribute('aria-hidden','true');
+      var one='<span>'+words.join('</span><span>')+'</span>';
+      d.innerHTML='<div class="rd-ribbon-track">'+one+one+one+one+'</div>';return d;
+    }
+    var pm=document.querySelector('#module-promociones .promo-side-by-side');
+    if(pm)pm.parentNode.insertBefore(ribbon(),pm);
+    var ct=document.querySelector('#module-contacto .contact-grid');
+    if(ct)ct.parentNode.insertBefore(ribbon(),ct);
+
+    if(reduce)return;
+
+    /* 2 · luz que sigue el cursor (solo computadora) */
+    if(fine){
+      var glow=document.createElement('div');glow.className='rd-cursor';body.appendChild(glow);
+      var tx=0,ty=0,raf=0;
+      document.addEventListener('pointermove',function(e){
+        body.classList.add('rd-hasptr');tx=e.clientX;ty=e.clientY;
+        if(!raf)raf=requestAnimationFrame(function(){raf=0;glow.style.transform='translate3d('+tx+'px,'+ty+'px,0)'});
+        var el=e.target&&e.target.closest&&e.target.closest('.card,.contact-card,.social-card,.asesoria-loc,.city-btn,.nav-tab');
+        if(el){var r=el.getBoundingClientRect();el.style.setProperty('--x',(e.clientX-r.left)+'px');el.style.setProperty('--y',(e.clientY-r.top)+'px')}
+      },{passive:true});
+      document.addEventListener('pointerleave',function(){body.classList.remove('rd-hasptr')});
+    }
+
+    /* 3 · partículas */
+    function particles(parent,fixed,opts){
+      var c=document.createElement('canvas');c.className='rd-particles'+(fixed?' rd-main':'');parent.insertBefore(c,parent.firstChild);
+      var ctx=c.getContext('2d'),W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,mobile?1:1.5),ps=[];
+      var n=mobile?10:opts.n;
+      function size(){var r=fixed?{width:innerWidth,height:innerHeight}:parent.getBoundingClientRect();W=r.width;H=r.height;c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+      size();addEventListener('resize',size);
+      for(var i=0;i<n;i++)ps.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.2,v:.08+Math.random()*.22,ph:Math.random()*6.28,s:.6+Math.random()*1.2,col:opts.cols[i%opts.cols.length]});
+      var last=0;
+      (function loop(t){
+        requestAnimationFrame(loop);
+        if(document.hidden||t-last<40)return;last=t;
+        var visible=fixed||!parent.classList.contains('hidden');if(!visible)return;
+        ctx.clearRect(0,0,W,H);
+        var calm=body.classList.contains('rd-calm');
+        for(var i=0;i<ps.length;i++){var p=ps[i];p.y-=p.v;p.x+=Math.sin(t/2600+p.ph)*.12;if(p.y<-8){p.y=H+8;p.x=Math.random()*W}
+          var a=(.35+.65*Math.abs(Math.sin(t/900*p.s+p.ph)))*(calm?.5:1);
+          ctx.globalAlpha=a*opts.a;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);ctx.fill();
+          }
+        ctx.globalAlpha=1;
+      })(0);
+    }
+    particles(body,true,{n:14,a:.8,cols:['#c8272e','#e2585c','#e0a040','#ff7b80']});
+    var gate=document.getElementById('cityGate');
+    if(gate)particles(gate,false,{n:24,a:1,cols:['#ff7b80','#e2585c','#ffd27a','#ffffff']});
+
+    /* modo calmado dentro del cotizador (formulario largo) */
+    function calm(){var m=document.getElementById('module-cotizador');body.classList.toggle('rd-calm',!!(m&&m.classList.contains('active')))}
+    document.addEventListener('click',function(){setTimeout(calm,80)},true);calm();
+  }catch(e){}
+});
+</script>
+
 <a href="https://wa.me/529845565481" target="_blank" class="wa-float" title="Contactar por WhatsApp">💬</a>
 
 <script>
