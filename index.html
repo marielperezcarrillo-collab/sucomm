@@ -1763,7 +1763,7 @@ header::after{opacity:.5}
 
 /* ═══ PANTALLA DE CIUDAD ═══ */
 .city-gate{background:linear-gradient(160deg,#0e0407 0%,#1b0709 55%,#260a0c 100%) !important;isolation:isolate;overflow:hidden}
-.city-gate::before,.city-gate::after{content:'';position:absolute;z-index:-1;border-radius:50%;pointer-events:none;will-change:transform}
+.city-gate::before,.city-gate::after{content:'';position:fixed;z-index:-1;border-radius:50%;pointer-events:none;will-change:transform}
 .city-gate::before{width:60vmax;height:60vmax;left:-20vmax;top:-22vmax;background:radial-gradient(circle,rgba(200,39,46,.55),transparent 65%);animation:rdFloatA 18s ease-in-out infinite alternate}
 .city-gate::after{width:52vmax;height:52vmax;right:-18vmax;bottom:-22vmax;background:radial-gradient(circle,rgba(255,123,128,.30),transparent 65%);animation:rdFloatB 22s ease-in-out infinite alternate}
 .city-gate-inner{max-width:600px}
@@ -1830,7 +1830,7 @@ body.rd-calm .rd-cursor{opacity:.55}
 
 /* 3 · Partículas (canvas) */
 .rd-particles{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.city-gate .rd-particles{position:absolute;z-index:-1}
+.city-gate .rd-particles{position:fixed;z-index:-1}
 body.rd-calm .rd-particles.rd-main{opacity:.35}
 
 /* 4 · Cinta en movimiento */
@@ -1875,12 +1875,45 @@ html,body{overflow-x:hidden;overflow-x:clip}
 .asesoria-prox-card .btn{margin-top:4px}
 #sucursalGroup[style*="block"]{display:flex !important;flex-direction:column;gap:8px}
 #sucursalGroup select{width:100%}
+
+/* Pantalla de ciudad · cinta y logos */
+.city-gate{flex-direction:column !important;justify-content:flex-start !important;align-items:center;overflow-x:hidden !important;overflow-y:auto !important}
+.city-gate-inner{margin-top:auto;padding-top:20px}
+.city-gate-foot{width:100%;margin-bottom:auto;padding-bottom:12px}
+.city-gate .rd-ribbon{margin-top:44px;margin-bottom:30px}
+.city-logos{display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;animation:rdUp .8s .6s var(--rd-ease) both}
+.city-logo-block{display:flex;align-items:center;gap:14px}
+.city-logo-label{font-size:.58rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.cl-sucomm{height:38px;width:auto;display:block}
+.cl-mangle{width:40px;height:40px;opacity:.95;display:block}
+.city-logo-mtext{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.city-logo-mtext .by{font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.city-logo-mtext .name{font-size:.82rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light)}
+.city-logo-sep{width:1px;height:34px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.3),transparent)}
+@media (max-width:720px){
+  .city-logos{gap:16px;flex-direction:column}
+  .city-logo-sep{width:44px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent)}
+  .city-logo-block:first-child{flex-direction:column;gap:8px}
+  .city-gate .rd-ribbon{margin-top:34px;margin-bottom:24px}
+}
+
+/* Pantalla de ciudad · cinta superior negra con frases */
+.city-gate .rd-ribbon-top{flex:none;align-self:flex-start;left:0;width:104vw;margin-left:calc(-2vw - 24px);margin-right:0;margin-top:22px;margin-bottom:0;transform:rotate(1.2deg);background:#0c0c0f;box-shadow:0 10px 26px rgba(0,0,0,.45);border-top:1px solid rgba(200,39,46,.55);border-bottom:1px solid rgba(200,39,46,.55);padding:13px 0}
+.city-gate .rd-ribbon-top::before{background:linear-gradient(100deg,#0c0c0f 0%,#1d1013 18%,#0c0c0f 36%,#2a0f13 52%,#0c0c0f 70%,#1d1013 86%,#0c0c0f 100%)}
+.city-gate .rd-ribbon-top .rd-ribbon-track{animation-duration:70s;animation-direction:reverse}
+.city-gate .rd-ribbon-top .rd-ribbon-track span{font-weight:500;font-style:italic;font-size:clamp(.88rem,2.1vw,1.08rem);letter-spacing:.4px;color:rgba(255,255,255,.92)}
+.city-gate .rd-ribbon-top .rd-ribbon-track span::after{color:#e2585c;font-style:normal}
+@media (max-width:720px){
+  .city-gate .rd-ribbon-top{margin-top:16px;margin-left:calc(-2vw - 24px);padding:11px 0}
+  .city-gate .rd-ribbon-top .rd-ribbon-track{animation-duration:55s}
+}
 </style>
 </head>
 <body class="city-locked">
 
 <!-- Selección de ciudad -->
 <div id="cityGate" class="city-gate" role="dialog" aria-modal="true" aria-labelledby="cityGateTitle">
+  <div class="rd-ribbon rd-ribbon-top" id="cityRibbonTop" aria-hidden="true"></div>
   <div class="city-gate-inner">
     <h1>Portal de Beneficios</h1>
     <div class="gold-ornament"><div class="line l"></div><div class="diamond"></div><div class="line r"></div></div>
@@ -1890,6 +1923,20 @@ html,body{overflow-x:hidden;overflow-x:clip}
       <button class="city-btn" onclick="seleccionarCiudad('CDMX')"><span class="pin">📍</span><span>CDMX</span><span class="arrow">›</span></button>
       <button class="city-btn" onclick="seleccionarCiudad('Guadalajara')"><span class="pin">📍</span><span>Guadalajara</span><span class="arrow">›</span></button>
       <button class="city-btn" onclick="seleccionarCiudad('Tijuana')"><span class="pin">📍</span><span>Tijuana</span><span class="arrow">›</span></button>
+    </div>
+  </div>
+  <div class="city-gate-foot">
+    <div class="rd-ribbon" id="cityRibbon" aria-hidden="true"></div>
+    <div class="city-logos">
+      <div class="city-logo-block">
+        <span class="city-logo-label">En colaboración con</span>
+        <img class="cl-sucomm" alt="SUCOMM">
+      </div>
+      <span class="city-logo-sep" aria-hidden="true"></span>
+      <div class="city-logo-block city-logo-mangle">
+        <img class="cl-mangle" alt="Mangle Capital">
+        <div class="city-logo-mtext"><span class="by">Powered by</span><span class="name">Mangle Capital</span></div>
+      </div>
     </div>
   </div>
 </div>
@@ -3147,6 +3194,24 @@ document.addEventListener("DOMContentLoaded",function(){
 });
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  try{
+    var words=['Seguros de vida','Retiro','Inversiones','Auto y moto','Gastos médicos','Hogar','Mascotas','Ahorro','Educación','Asesoría gratuita'];
+    var one='<span>'+words.join('</span><span>')+'</span>';
+    var rb=document.getElementById('cityRibbon');
+    if(rb)rb.innerHTML='<div class="rd-ribbon-track">'+one+one+one+one+'</div>';
+    var frases=['Protege lo que más quieres','Tu retiro se construye desde hoy','Haz que tu dinero trabaje para ti','Tu familia tranquila, tú también','Ahorrar hoy es libertad mañana','Asesoría gratuita, sin compromiso','Empezar pronto es la mejor estrategia','La educación de tus hijos, asegurada','Lo que cuidas hoy te cuida mañana','Tú pones la meta, nosotros el plan'];
+    var f1='<span>'+frases.join('</span><span>')+'</span>';
+    var rt=document.getElementById('cityRibbonTop');
+    if(rt)rt.innerHTML='<div class="rd-ribbon-track">'+f1+f1+'</div>';
+    var suc=document.querySelector('.sucomm-banner img'),man=document.querySelector('.mangle-footer img');
+    var a=document.querySelector('.cl-sucomm'),b=document.querySelector('.cl-mangle');
+    if(a&&suc)a.src=suc.src;else if(a)a.style.display='none';
+    if(b&&man)b.src=man.src;else if(b)b.style.display='none';
+  }catch(e){}
+});
+</script>
 <a href="https://wa.me/529845565481" target="_blank" class="wa-float" title="Contactar por WhatsApp">💬</a>
 
 <script>
