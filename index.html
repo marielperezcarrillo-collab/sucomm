@@ -1865,6 +1865,16 @@ html,body{overflow-x:hidden;overflow-x:clip}
   .rd-ribbon-track,.rd-ribbon,.rd-gt,.progress-bar-fill::after{animation:none !important}
   .rd-particles,.rd-cursor{display:none !important}
 }
+.rd-off{display:none !important}
+
+/* Asesoría presencial · aviso próximamente */
+.asesoria-prox-card{background:var(--rd-glass);border:1px solid rgba(255,255,255,.9);border-radius:24px;padding:34px 28px;text-align:center;box-shadow:0 14px 44px rgba(60,12,16,.10);max-width:640px;margin:0 auto}
+.asesoria-prox-emoji{font-size:2.2rem;margin-bottom:6px}
+.asesoria-prox-card h3{font-family:'DM Sans',sans-serif;font-weight:700;font-size:1.35rem;color:var(--rd-ink);margin-bottom:8px}
+.asesoria-prox-card p{font-size:.95rem;color:var(--text-light);line-height:1.6;margin:0 auto 24px !important;max-width:460px}
+.asesoria-prox-card .btn{margin-top:4px}
+#sucursalGroup[style*="block"]{display:flex !important;flex-direction:column;gap:8px}
+#sucursalGroup select{width:100%}
 </style>
 </head>
 <body class="city-locked">
@@ -2429,11 +2439,11 @@ html,body{overflow-x:hidden;overflow-x:clip}
     <div class="module-icon">🤝</div>
     <div>
       <h2>Asesoría Presencial</h2>
-      <p>Fechas y horarios en CDMX este mes</p>
+      <p id="asesoriaSub" data-orig="Fechas y horarios en CDMX este mes">Fechas y horarios en CDMX este mes</p>
     </div>
   </div>
 
-  <div class="areas-banner" style="margin-bottom:28px">
+  <div class="areas-banner rd-cdmx-only" style="margin-bottom:28px">
     <div class="areas-banner-icon">📍</div>
     <div>
       <div class="areas-banner-title">Estaremos en CDMX</div>
@@ -2442,7 +2452,25 @@ html,body{overflow-x:hidden;overflow-x:clip}
     <div class="areas-banner-badge">Nuevo</div>
   </div>
 
-  <div class="asesoria-loc-grid">
+  <!-- Aviso para ciudades sin fecha confirmada (Guadalajara y Tijuana) -->
+  <div id="asesoriaProx" class="rd-off">
+    <div class="areas-banner" style="margin-bottom:28px">
+      <div class="areas-banner-icon">✨</div>
+      <div>
+        <div class="areas-banner-title">Muy pronto estaremos en <span class="asesoria-prox-city">tu ciudad</span></div>
+        <div class="areas-banner-sub">Estamos preparando las fechas de asesoría presencial. En cuanto las tengamos confirmadas las verás aquí: día, horario y lugar. Quédate al pendiente, falta poco.</div>
+      </div>
+      <div class="areas-banner-badge">Próximamente</div>
+    </div>
+    <div class="asesoria-prox-card">
+      <div class="asesoria-prox-emoji">💬</div>
+      <h3>¿Necesitas un servicio antes?</h3>
+      <p>No tienes que esperar. Escríbenos por WhatsApp, cuéntanos qué buscas y te orientamos por ahí mismo.</p>
+      <a id="asesoriaProxBtn" class="btn btn-primary" href="https://wa.me/529845565481" target="_blank" rel="noopener">💬 Escríbenos por WhatsApp</a>
+    </div>
+  </div>
+
+  <div class="asesoria-loc-grid rd-cdmx-only">
     <div class="asesoria-loc-card">
       <div class="asesoria-loc-head">
         <div class="asesoria-loc-pin">📍</div>
@@ -2472,8 +2500,8 @@ html,body{overflow-x:hidden;overflow-x:clip}
     </div>
   </div>
 
-  <div class="asesoria-cta-wrap">
-    <a class="btn btn-primary" href="https://wa.me/529845565481?text=Hola%2C%20me%20interesa%20agendar%20una%20asesor%C3%ADa%20presencial%20en%20CDMX%20(Reforma%2099%20el%2013%20de%20octubre%20o%20Reforma%2093%20el%2015%20de%20octubre)." target="_blank">💬 Solicitar con anticipación</a>
+  <div class="asesoria-cta-wrap rd-cdmx-only">
+    <a class="btn btn-primary" href="https://wa.me/529845565481?text=Hola%2C%20me%20interesa%20agendar%20una%20asesor%C3%ADa%20presencial%20en%20CDMX%20(Reforma%2099%20el%2010%20de%20noviembre%20o%20Reforma%2093%20el%2012%20de%20noviembre)." target="_blank">💬 Solicitar con anticipación</a>
   </div>
 
 </div>
@@ -3023,6 +3051,98 @@ document.addEventListener("DOMContentLoaded",function(){
     /* modo calmado dentro del cotizador (formulario largo) */
     function calm(){var m=document.getElementById('module-cotizador');body.classList.toggle('rd-calm',!!(m&&m.classList.contains('active')))}
     document.addEventListener('click',function(){setTimeout(calm,80)},true);calm();
+  }catch(e){}
+});
+</script>
+
+<script>
+/* Reglas por ciudad (solo muestra/oculta). Guadalajara: por convenio NO se ofrece
+   Auto, Motocicleta, Vivienda (Hogar) ni Gastos Médicos Mayores. */
+document.addEventListener("DOMContentLoaded",function(){
+  try{
+    var OFF={Guadalajara:['Auto','Motocicleta','Hogar','GMM Individual','GMM Familiar']};
+    var RIBBON_OFF={Guadalajara:['Auto y moto','Gastos médicos','Hogar']};
+    var TAG_RE=/(Auto|Moto|Hogar|GMM|Gastos M)/i;   // textos de productos no disponibles
+    var city='';
+    var origSel=window.seleccionarCiudad;
+    function off(){return OFF[city]||[]}
+    function chipName(el){var m=(el.getAttribute('onclick')||'').match(/'([^']*)'/);return m?m[1]:''}
+
+    function apply(){
+      var list=off();
+      // 1 · Cotizador: tarjetas de producto
+      document.querySelectorAll('#module-cotizador .chip-card').forEach(function(card){
+        var n=chipName(card),hide=list.indexOf(n)>-1;
+        if(hide&&card.classList.contains('selected')){try{toggleChip(card,n)}catch(e){}}
+        card.classList.toggle('rd-off',hide);
+      });
+      document.querySelectorAll('#module-cotizador .area-sub').forEach(function(el){
+        if(!el.__o)el.__o=el.textContent;
+        el.textContent=list.length?el.__o.split(' · ').filter(function(t){return !/^(Auto|Moto|Hogar|GMM)/.test(t)}).join(' · '):el.__o;
+      });
+      // 2 · Educación financiera: consejos de productos no disponibles
+      document.querySelectorAll('.edu-tip-card').forEach(function(c){
+        var t=c.querySelector('.edu-tip-tag'),n=t?chipName(t):'';
+        c.classList.toggle('rd-off',list.indexOf(n)>-1);
+      });
+      // 3 · ¿Qué me conviene?: opciones de prioridad
+      document.querySelectorAll('#qq1 .quiz-opt').forEach(function(o){
+        var m=(o.getAttribute('onclick')||'').match(/'(patrimonio|salud)'/);
+        o.classList.toggle('rd-off',!!(m&&list.length));
+      });
+      document.querySelectorAll('#qResultProducts .quiz-product-tag').forEach(function(t){
+        if(list.length&&TAG_RE.test(t.textContent))t.remove();
+      });
+      // 4 · Videos y presentaciones
+      document.querySelectorAll('.media-card').forEach(function(c){
+        var tg=c.querySelector('.media-card-tag');c.classList.toggle('rd-off',!!(tg&&list.indexOf(tg.textContent.trim())>-1));
+      });
+      document.querySelectorAll('.media-filter-chip').forEach(function(c){c.classList.toggle('rd-off',list.indexOf(c.textContent.trim())>-1)});
+      // 5 · Cinta de la portada
+      var ro=RIBBON_OFF[city]||[];
+      document.querySelectorAll('.rd-ribbon-track').forEach(function(tr){
+        tr.querySelectorAll('span').forEach(function(s){s.classList.toggle('rd-off',ro.indexOf(s.textContent.trim())>-1)});
+      });
+    }
+
+    /* Cotizador: la ciudad ya viene de la pantalla inicial, no se vuelve a preguntar */
+    function ciudadAuto(c){
+      var sel=document.getElementById('ciudad');if(!sel)return;
+      sel.value=c;
+      try{updateSucursal()}catch(e){}
+      var g=sel.closest('.form-group');if(g)g.classList.add('rd-off');
+      var er=document.getElementById('err-ciudad');if(er)er.textContent='';
+    }
+    /* Asesoría presencial: solo CDMX tiene fechas confirmadas */
+    function asesoriaPorCiudad(c){
+      var cdmx=c==='CDMX';
+      document.querySelectorAll('#module-asesoria .rd-cdmx-only').forEach(function(el){el.classList.toggle('rd-off',!cdmx)});
+      var prox=document.getElementById('asesoriaProx');if(prox)prox.classList.toggle('rd-off',cdmx);
+      var sub=document.getElementById('asesoriaSub');
+      if(sub)sub.textContent=cdmx?sub.getAttribute('data-orig'):'Muy pronto en '+c;
+      document.querySelectorAll('.asesoria-prox-city').forEach(function(e){e.textContent=c});
+      var b=document.getElementById('asesoriaProxBtn');
+      if(b)b.href='https://wa.me/529845565481?text='+encodeURIComponent('Hola, soy de '+c+' y me interesa un servicio. ¿Me pueden orientar?');
+    }
+    if(typeof origSel==='function'){
+      window.seleccionarCiudad=function(c){
+        var changed=city!==c; city=c;
+        if(changed){
+          try{if(typeof resetQuiz==='function')resetQuiz()}catch(e){}
+          try{if(typeof currentStep!=='undefined'&&currentStep>0&&typeof goStep==='function')goStep(0)}catch(e){}
+        }
+        apply();
+        origSel(c);
+        apply();
+        ciudadAuto(c);
+        asesoriaPorCiudad(c);
+      };
+    }
+    // Reaplicar cuando el contenido se redibuja (filtros de videos, resultado del quiz)
+    ['videosGrid','videosFilterBar','presGrid','presFilterBar','qResultProducts'].forEach(function(id){
+      var el=document.getElementById(id);if(el)new MutationObserver(apply).observe(el,{childList:true});
+    });
+    window.__rdApplyCity=apply;
   }catch(e){}
 });
 </script>
