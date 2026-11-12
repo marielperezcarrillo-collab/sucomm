@@ -1973,6 +1973,23 @@ html,body{overflow-x:hidden;overflow-x:clip}
 #module-retiro .rt-err:empty{display:none}
 #module-retiro .rt-bad input,#module-retiro input.rt-bad,#module-retiro select.rt-bad{border-color:#c8272e !important;background:#fff6f6}
 #module-retiro input[type=range].rt-range{border:none !important;background:transparent !important;padding:0 !important;height:30px;box-shadow:none !important}
+
+#module-retiro .rt-aport-wrap{display:flex;align-items:center;gap:12px;max-width:420px}
+#module-retiro .rt-aport-wrap input{font-family:'DM Sans',sans-serif;font-size:1.6rem !important;font-weight:800;color:#c8272e;flex:1}
+#module-retiro .rt-aport-wrap span{font-weight:700;color:#8c161b;white-space:nowrap}
+#module-retiro .rt-ine-slots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#module-retiro .rt-slot{background:#fff;border:1px solid #f0d4d5;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px}
+#module-retiro .rt-slot>span{font-size:.75rem;font-weight:700;color:#8c161b}
+#module-retiro .rt-tabla-wrap{margin-top:16px;max-height:340px;overflow:auto;border:1px solid #f0d4d5;border-radius:14px}
+#module-retiro .rt-tabla{width:100%;border-collapse:collapse;font-size:.82rem}
+#module-retiro .rt-tabla th{position:sticky;top:0;background:#8c161b;color:#fff;font-weight:600;padding:8px 10px;text-align:right;white-space:nowrap}
+#module-retiro .rt-tabla th:first-child,#module-retiro .rt-tabla td:first-child{text-align:center}
+#module-retiro .rt-tabla td{padding:7px 10px;text-align:right;border-bottom:1px solid #f6e6e7;white-space:nowrap}
+#module-retiro .rt-tabla tr:nth-child(even) td{background:#fffafa}
+#module-retiro .rt-tabla tr.fin td{font-weight:800;color:#8c161b;background:#fff1f1}
+@media (max-width:720px){#module-retiro .rt-ine-slots{grid-template-columns:1fr}}
+
+#module-retiro .rt-warn:empty{display:none}
 </style>
 </head>
 <body class="city-locked">
@@ -2596,10 +2613,17 @@ html,body{overflow-x:hidden;overflow-x:clip}
           <div class="rt-err" id="rtRetiroErr"></div>
         </div>
         <div class="form-group rt-full">
-          <label>Aportación mensual *</label>
-          <div class="rt-amount" id="rtAportTxt">$3,000</div>
-          <input type="range" class="rt-range" id="rtAport" min="2000" max="12000" step="500" value="3000" oninput="rtCalc()">
-          <div class="rt-note">Desde $2,000 hasta $12,000 al mes.</div>
+          <label>¿Cada cuánto quieres aportar? *</label>
+          <div class="rt-chips" id="rtPerChips" style="margin-bottom:12px">
+            <button type="button" class="rt-chip on" onclick="rtPer(12,this)">Mensual</button>
+            <button type="button" class="rt-chip" onclick="rtPer(4,this)">Trimestral</button>
+            <button type="button" class="rt-chip" onclick="rtPer(1,this)">Anual</button>
+          </div>
+          <label>¿Cuánto quieres aportar? *</label>
+          <div class="rt-aport-wrap"><input type="text" inputmode="numeric" id="rtAport" placeholder="$3,000" oninput="rtAportTyping(this)" onblur="rtAportCommit()" onkeydown="if(event.key==='Enter'){this.blur()}"><span id="rtAportSuf">pesos al mes</span></div>
+          <div class="rt-note">Escribe la cantidad completa. Mínimo $2,000 al mes, $6,000 al trimestre o $18,000 al año.</div>
+          <div class="rt-err" id="rtAportErr"></div>
+          <div class="rt-warn" id="rtAportNota" style="margin-top:8px"></div>
         </div>
         <div class="form-group">
           <label>¿Que tu aportación suba con la inflación cada año?</label>
@@ -2633,6 +2657,7 @@ html,body{overflow-x:hidden;overflow-x:clip}
       <div id="rtResBody"></div>
       <svg class="rt-chart" id="rtChart" viewBox="0 0 720 240" preserveAspectRatio="none"></svg>
       <div class="rt-note" id="rtChartLegend"></div>
+      <div class="rt-tabla-wrap" id="rtTablaWrap"></div>
       <div class="rt-legal">
         *Proyección ilustrativa, no es una cotización ni una oferta. Los rendimientos son estimados y no están garantizados; dependen del comportamiento de los mercados.
         Supuestos: <span id="rtSupuestos"></span>. Incluye cargos y bono de un plan de retiro de referencia.
@@ -2640,8 +2665,8 @@ html,body{overflow-x:hidden;overflow-x:clip}
         Buscaremos la opción que más se adapte a tu necesidad entre distintas aseguradoras.
       </div>
       <div class="rt-actions">
-        <button type="button" class="btn btn-primary" onclick="rtIrPaso2()">Quiero avanzar con mi solicitud →</button>
-        <button type="button" class="btn btn-outline-rt" onclick="rtAgenda()">Agendar un diagnóstico</button>
+        <button type="button" class="btn btn-primary" onclick="rtIrPaso2('ya')">Quiero contratar ya →</button>
+        <button type="button" class="btn btn-outline-rt" onclick="rtIrPaso2('asesoria')">Quiero contratar, pero necesito asesoría</button>
       </div>
     </div>
   </div>
@@ -2730,8 +2755,14 @@ html,body{overflow-x:hidden;overflow-x:clip}
       <h3>Tus documentos</h3>
       <p class="rt-sub">Sube fotos claras o PDF. No tienen que ser recientes, salvo el comprobante de domicilio.</p>
       <div class="rt-grid">
-        <div class="rt-file"><label>INE · frente *</label><input type="file" id="rtIneF" accept="image/*,application/pdf" onchange="rtFile(this)"><div class="rt-prev" id="rtIneFPrev"></div><div class="rt-err" id="err-rtIneF"></div></div>
-        <div class="rt-file"><label>INE · reverso *</label><input type="file" id="rtIneR" accept="image/*,application/pdf" onchange="rtFile(this)"><div class="rt-prev" id="rtIneRPrev"></div><div class="rt-err" id="err-rtIneR"></div></div>
+        <div class="rt-file rt-full"><label>INE * (foto de frente y reverso, o un solo PDF con ambos lados)</label>
+          <div class="rt-ine-slots">
+            <div class="rt-slot"><span>Frente</span><input type="file" id="rtIneF" accept="image/*" onchange="rtFile(this)"><div class="rt-prev" id="rtIneFPrev"></div></div>
+            <div class="rt-slot"><span>Reverso</span><input type="file" id="rtIneR" accept="image/*" onchange="rtFile(this)"><div class="rt-prev" id="rtIneRPrev"></div></div>
+          </div>
+          <div class="rt-slot"><span>o un solo PDF</span><input type="file" id="rtInePdf" accept="application/pdf" onchange="rtFile(this)"><div class="rt-prev" id="rtInePdfPrev"></div></div>
+          <div class="rt-err" id="err-rtIne"></div>
+        </div>
         <div class="rt-file rt-full"><label>Constancia de situación fiscal * (PDF, o foto de las 2 hojas)</label><input type="file" id="rtCSF" accept="image/*,application/pdf" multiple onchange="rtFile(this)"><div class="rt-prev" id="rtCSFPrev"></div><div class="rt-err" id="err-rtCSF"></div></div>
         <div class="rt-file rt-full" id="rtCompWrap" style="display:none"><label>Comprobante de domicilio * (no mayor a 3 meses)</label><input type="file" id="rtComp" accept="image/*,application/pdf" onchange="rtFile(this)"><div class="rt-prev" id="rtCompPrev"></div><div class="rt-err" id="err-rtComp"></div></div>
       </div>
@@ -6080,11 +6111,11 @@ if (document.readyState === 'loading') {
 <!-- Aviso: edad cercana al retiro -->
 <div class="rt-modal" id="rtDiagModal">
   <div class="rt-modal-box">
-    <h3>📅 Te recomendamos un diagnóstico primero</h3>
+    <h3>📅 Te sugerimos agendar una cita</h3>
     <p id="rtDiagTxt">Por la cercanía de tu edad de retiro, es importante que primero agendes un diagnóstico. Así revisamos contigo qué opción te conviene, porque con plazos cortos las reglas y los rendimientos cambian.</p>
     <div class="rt-actions">
-      <button type="button" class="btn btn-primary" onclick="rtAgenda()">Agendar diagnóstico</button>
-      <button type="button" class="btn btn-outline-rt" onclick="document.getElementById('rtDiagModal').classList.remove('show')">Entendido</button>
+      <button type="button" class="btn btn-primary" onclick="rtAgenda()">Sí, agendar cita</button>
+      <button type="button" class="btn btn-outline-rt" onclick="document.getElementById('rtDiagModal').classList.remove('show')">No, continuar</button>
     </div>
   </div>
 </div>
@@ -6119,13 +6150,14 @@ var RT_CFG = {
   UDI: 8.8772,                     // valor UDI nov-2026 (Banxico/DOF)
   // Rendimiento supuesto según plazo (años de aportación)
   tasaPorPlazo: function (p) { return p >= 15 ? 0.10 : (p >= 11 ? 0.085 : (p >= 10 ? 0.07 : 0.06)); },
-  APORT_MIN: 2000, APORT_MAX: 12000,
+  APORT_MIN: { 12: 2000, 4: 6000, 1: 18000 },   // mínimos por periodicidad (sin máximo)
+  PER_TXT: { 12: 'al mes', 4: 'al trimestre', 1: 'al año' }, PER_NOM: { 12: 'Mensual', 4: 'Trimestral', 1: 'Anual' },
   CALENDLY: 'https://calendly.com/marielperezcarrillo/asesoria',
   WHATSAPP: '529845565481',
   CORREO_INTERNO: 'manglecapital@gmail.com',
   BONO_TASA: null                  // null = el bono crece a la misma tasa del plan (el Excel usa 9% fijo)
 };
-var RT = { retiro: 65, tipo: 'ded', retiroOpc: { ded: [65], noded: [55, 60], ambas: [60, 65] }, infl: 'si', moneda: 'Pesos', perfil: 'Moderado',
+var RT = { aport: 0, per: 12, modo: 'ya', retiro: 65, tipo: 'ded', retiroOpc: { ded: [65], noded: [55, 60], ambas: [60, 65] }, infl: 'si', moneda: 'Pesos', perfil: 'Moderado',
            pad: '', casado: '', hijos: '', dirIne: '', priv: false, files: {}, last: null, diagShown: {} };
 
 function rtFmt(n) { return '$' + Math.round(n).toLocaleString('es-MX'); }
@@ -6141,41 +6173,50 @@ function rtBonoPct(plazo, anual) {
 }
 
 // regimen: 151 (deducible, cargos + IVA) o 93 (no deducible)
-function rtSimular(edad, aport, plazo, r, regimen, inflOn, sueldoMensual, isr) {
+function rtSimular(edad, aport, plazo, r, regimen, inflOn, sueldoMensual, isr, per) {
+  per = per || 12; // pagos por año: 12 mensual, 4 trimestral, 1 anual
   var infl = RT_CFG.INFLACION, iva = regimen === 151 ? 1.16 : 1.0;
   var im = Math.pow(1 + r, 1 / 12) - 1;
   var L = 0, Y = 0, B = 0, a = aport, aportado = 0, aportIdx = [];
-  var pb = rtBonoPct(plazo, aport * 12);
+  var pb = rtBonoPct(plazo, aport * per);
   var fijo2 = 15 * RT_CFG.UDI * (1 + infl) * iva;
-  var anios = [], benef = 0, aportAnual = 0, ingresoAnual = sueldoMensual * 12, tope = 5 * RT_CFG.UMA_ANUAL_2026;
+  var anios = [], benef = 0, recupTotal = 0, aportAnual = 0, ingresoAnual = sueldoMensual * 12, tope = 5 * RT_CFG.UMA_ANUAL_2026;
   for (var m = 1; m <= plazo * 12; m++) {
     if (m > 1 && (m - 1) % 12 === 0 && inflOn) a *= (1 + infl);
+    var recupAnio = 0;
     if (m >= 25 && (m - 1) % 12 === 0) fijo2 *= (1 + infl);
-    aportado += a; aportAnual += a; aportIdx.push(a);
-    // Unidades iniciales (primeros 18 meses)
-    var g = m <= 18 ? a : 0;
+    var paga = per === 12 || (per === 4 && (m - 1) % 3 === 0) || (per === 1 && (m - 1) % 12 === 0);
+    var pago = paga ? a : 0, g = 0, sC = 0;
+    if (pago) { aportado += pago; aportAnual += pago; }
+    aportIdx.push(pago);
+    // Unidades iniciales (primeros 18 meses); en anual el pago del mes 13 se divide a la mitad (igual que el Excel)
+    if (m <= 12) g = pago;
+    else if (m <= 18) { if (per === 1) { g = pago / 2; sC = pago / 2; } else g = pago; }
+    else sC = pago;
     var h = (L + g) * im, i = m === 1 ? -500 : 0;
     var j = m % 3 === 0 ? -(L + g + h) * 0.009 * iva : 0;
     var k = -(L + g + h + (regimen === 151 ? i + j : 0)) * 0.001 * iva;
     L = L + g + h + i + j + k;
     // Saldo comprometido (mes 19 en adelante)
-    if (m >= 19) {
-      var u = (Y + a) * im, v = -fijo2, x = -(Y + a + u + (regimen === 151 ? v : 0)) * 0.001 * iva;
-      Y = Y + a + u + v + x;
+    if (m >= 19 || sC || Y) {
+      var u = (Y + sC) * im, v = m >= 19 ? -fijo2 : 0, x = -(Y + sC + u + (regimen === 151 ? v : 0)) * 0.001 * (m >= 19 ? iva : 1);
+      Y = Y + sC + u + v + x;
     }
     // Bono (sobre aportaciones del primer año; invertido a la misma tasa del plan)
-    var f = m <= 12 ? aport * pb : 0;
+    var f = m <= 12 && paga ? aport * pb : 0;
     var imb = RT_CFG.BONO_TASA ? Math.pow(1 + RT_CFG.BONO_TASA, 1 / 12) - 1 : im;
     var gb = (B + f) * imb, hb = m % 3 === 0 ? -(B + f + gb) * 0.009 : 0, ib = -(B + f + gb) * 0.001;
     B = B + f + gb + hb + ib;
+    if (typeof RT_DEBUG !== 'undefined') RT_DEBUG.push([m, L, Y, B]);
     if (m % 12 === 0) {
       var n = m / 12;
       if (regimen === 151) {
         var ded = Math.min(aportAnual, ingresoAnual > 0 ? ingresoAnual * 0.10 : aportAnual, tope);
-        benef = ded * isr + benef * (1 + r);
+        recupAnio = ded * isr; recupTotal += recupAnio;
+        benef = recupAnio + benef * (1 + r);
         ingresoAnual *= (1 + infl); tope *= (1 + infl);
       }
-      anios.push({ anio: n, edad: edad + n, aportado: aportado, saldo: L + Y + B, benef: benef });
+      anios.push({ anio: n, edad: edad + n, aporteAnio: aportAnual, aportado: aportado, saldo: L + Y + B, benef: benef, recup: recupAnio });
       aportAnual = 0;
     }
   }
@@ -6193,7 +6234,7 @@ function rtSimular(edad, aport, plazo, r, regimen, inflOn, sueldoMensual, isr) {
       nota = 'Antes de los 60 años: retención estimada de 20% sobre intereses reales.';
     }
   }
-  return { anios: anios, saldo: saldo, neto: neto, aportado: aportado, benef: benef, nota: nota, bonoPct: pb, edadFin: edadFin, plazo: plazo, tasa: r, regimen: regimen };
+  return { anios: anios, saldo: saldo, neto: neto, aportado: aportado, benef: benef, recupTotal: recupTotal, nota: nota, bonoPct: pb, edadFin: edadFin, plazo: plazo, tasa: r, regimen: regimen };
 }
 
 function rtIsrMarginal(sueldoMensual) {
@@ -6256,9 +6297,35 @@ function rtTipoUI() {
   }
 }
 
+function rtAportTyping(el) {
+  var n = String(el.value).replace(/\D/g, '').slice(0, 6);
+  el.value = n ? '$' + Number(n).toLocaleString('es-MX') : '';
+  document.getElementById('rtAportErr').textContent = '';
+}
+function rtPer(v, el) {
+  RT.per = v;
+  el.parentNode.querySelectorAll('.rt-chip').forEach(function (c) { c.classList.toggle('on', c === el); });
+  document.getElementById('rtAportSuf').textContent = 'pesos ' + RT_CFG.PER_TXT[v];
+  document.getElementById('rtAport').placeholder = v === 12 ? '$3,000' : v === 4 ? '$9,000' : '$36,000';
+  rtAportCommit();
+}
+function rtAportCommit() {
+  var v = rtNum(document.getElementById('rtAport').value), e = document.getElementById('rtAportErr'), nt = document.getElementById('rtAportNota');
+  var min = RT_CFG.APORT_MIN[RT.per]; e.textContent = ''; nt.textContent = '';
+  if (!v) { RT.aport = 0; rtCalc(); return; }
+  if (v < min) {
+    RT.aport = 0;
+    e.textContent = RT.per === 12 ? 'El mínimo es $2,000 al mes. Con menos, el plan no alcanza a construir un ahorro suficiente para tu retiro en el tiempo que tienes.'
+      : RT.per === 4 ? 'El mínimo es $6,000 al trimestre (equivale a $2,000 al mes). Con menos, el plan no alcanza a construir un ahorro suficiente para tu retiro.'
+      : 'El mínimo es $18,000 al año.';
+    rtCalc(); return;
+  }
+  if (RT.per === 1 && v < 24000) nt.textContent = 'Nota: ' + rtFmt(v) + ' al año equivale a ' + rtFmt(v / 12) + ' al mes. Para llegar mejor a tu meta te sugerimos al menos $24,000 al año.';
+  RT.aport = v; rtCalc();
+}
+
 function rtCalc() {
-  var aport = +document.getElementById('rtAport').value;
-  document.getElementById('rtAportTxt').textContent = rtFmt(aport) + ' al mes';
+  var aport = RT.aport;
   var edad = rtEdad(), err = document.getElementById('rtNacErr');
   var res = document.getElementById('rtResultados'), rErr = document.getElementById('rtRetiroErr');
   err.textContent = ''; rErr.textContent = '';
@@ -6282,16 +6349,17 @@ function rtCalc() {
   document.getElementById('rtPlazoTxt').textContent = RT.tipo === 'ambas' && edad < 60
     ? 'Tienes ' + edad + ' años: tu plan sería de ' + (60 - edad) + ' años si te retiras a los 60, o de ' + (65 - edad) + ' años a los 65.'
     : 'Tienes ' + edad + ' años: tu plan sería de ' + plazo + ' años de aportaciones.';
-  if (plazo < 5) rtDiag(edad, RT.retiro, false);
+  if (plazo < 10) rtDiag(edad, RT.retiro, false);
+  if (!aport) { res.style.display = 'none'; return; }
   var sueldo = rtNum(document.getElementById('rtSueldo').value), isr = rtIsrMarginal(sueldo);
   var r = RT_CFG.tasaPorPlazo(plazo), inflOn = RT.infl === 'si';
   var escenarios = [];
-  if (RT.tipo === 'noded') escenarios.push({ t: 'No deducible · retiro a los ' + RT.retiro, s: rtSimular(edad, aport, plazo, r, 93, inflOn, sueldo, isr) });
-  else if (RT.tipo === 'ded') escenarios.push({ t: 'Deducible · retiro a los 65', s: rtSimular(edad, aport, plazo, r, 151, inflOn, sueldo, isr) });
+  if (RT.tipo === 'noded') escenarios.push({ t: 'No deducible · retiro a los ' + RT.retiro, s: rtSimular(edad, aport, plazo, r, 93, inflOn, sueldo, isr, RT.per) });
+  else if (RT.tipo === 'ded') escenarios.push({ t: 'Deducible · retiro a los 65', s: rtSimular(edad, aport, plazo, r, 151, inflOn, sueldo, isr, RT.per) });
   else {
     var p65 = 65 - edad, r65 = RT_CFG.tasaPorPlazo(p65);
-    escenarios.push({ t: 'Deducible · retiro a los 65', s: rtSimular(edad, aport, p65, r65, 151, inflOn, sueldo, isr) });
-    if (edad < 60) escenarios.push({ t: 'No deducible · retiro a los 60', s: rtSimular(edad, aport, 60 - edad, RT_CFG.tasaPorPlazo(60 - edad), 93, inflOn, sueldo, isr) });
+    escenarios.push({ t: 'Deducible · retiro a los 65', s: rtSimular(edad, aport, p65, r65, 151, inflOn, sueldo, isr, RT.per) });
+    if (edad < 60) escenarios.push({ t: 'No deducible · retiro a los 60', s: rtSimular(edad, aport, 60 - edad, RT_CFG.tasaPorPlazo(60 - edad), 93, inflOn, sueldo, isr, RT.per) });
   }
   RT.last = { edad: edad, aport: aport, plazo: plazo, sueldo: sueldo, isr: isr, escenarios: escenarios };
   rtRender();
@@ -6301,21 +6369,36 @@ function rtKpis(e) {
   var s = e.s, h = '<div class="rt-kpis">';
   h += '<div class="rt-kpi light"><div class="l">Habrás aportado</div><div class="v">' + rtFmt(s.aportado) + '</div><div class="s">en ' + s.plazo + ' años</div></div>';
   h += '<div class="rt-kpi"><div class="l">Saldo estimado a los ' + s.edadFin + '</div><div class="v">' + rtFmt(s.saldo) + '</div><div class="s">rendimiento supuesto ' + (s.tasa * 100).toFixed(1).replace('.0', '') + '% anual</div></div>';
+  h += '<div class="rt-kpi light"><div class="l">Rendimiento + bono</div><div class="v">' + rtFmt(s.saldo - s.aportado) + '</div><div class="s">lo que gana tu dinero, ya con cargos e incluye el bono de la aseguradora</div></div>';
   h += '<div class="rt-kpi light"><div class="l">Disponible neto</div><div class="v">' + rtFmt(s.neto) + '</div><div class="s">' + s.nota + '</div></div>';
   if (s.regimen === 151) h += RT.last && RT.last.sueldo > 0
-    ? '<div class="rt-kpi light"><div class="l">Beneficio fiscal acumulado</div><div class="v">' + rtFmt(s.benef) + '</div><div class="s">lo que te regresa el SAT, reinvertido</div></div>'
-    : '<div class="rt-kpi light"><div class="l">Beneficio fiscal acumulado</div><div class="v">—</div><div class="s">Escribe tu sueldo arriba para calcularlo.</div></div>';
+    ? '<div class="rt-kpi light"><div class="l">Te regresa el SAT</div><div class="v">' + rtFmt(s.recupTotal) + '</div><div class="s">en total; si lo reinviertes llega a ' + rtFmt(s.benef) + '</div></div>'
+    : '<div class="rt-kpi light"><div class="l">Te regresa el SAT</div><div class="v">—</div><div class="s">Escribe tu sueldo arriba para calcularlo.</div></div>';
   return h + '</div>';
 }
 
 function rtRender() {
   var L = RT.last, body = document.getElementById('rtResBody'), res = document.getElementById('rtResultados');
   res.style.display = 'block';
-  document.getElementById('rtResSub').textContent = 'Aportando ' + rtFmt(L.aport) + ' al mes' + (RT.infl === 'si' ? ' (con incremento anual por inflación)' : '') + '. Perfil ' + RT.perfil.toLowerCase() + ' en ' + RT.moneda.toLowerCase() + '.';
+  document.getElementById('rtResSub').textContent = 'Aportando ' + rtFmt(L.aport) + ' ' + RT_CFG.PER_TXT[RT.per] + (RT.infl === 'si' ? ' (con incremento anual por inflación)' : '') + '. Perfil ' + RT.perfil.toLowerCase() + ' en ' + RT.moneda.toLowerCase() + '.';
   if (L.escenarios.length === 1) body.innerHTML = '<div class="rt-col-title">' + L.escenarios[0].t + '</div>' + rtKpis(L.escenarios[0]);
   else body.innerHTML = '<div class="rt-cols">' + L.escenarios.map(function (e) { return '<div><div class="rt-col-title">' + e.t + '</div>' + rtKpis(e) + '</div>'; }).join('') + '</div>';
   document.getElementById('rtSupuestos').textContent = 'inflación ' + (RT_CFG.INFLACION * 100).toFixed(2) + '% anual; rendimiento ' + L.escenarios.map(function (e) { return (e.s.tasa * 100).toFixed(1).replace('.0', '') + '% (' + e.s.plazo + ' años)'; }).join(' y ') + (L.sueldo ? '; tasa de ISR estimada ' + Math.round(L.isr * 100) + '%' : '');
   rtChart(L.escenarios[0].s);
+  rtTabla(L.escenarios);
+}
+function rtTabla(escs) {
+  var w = document.getElementById('rtTablaWrap'), h = '';
+  escs.forEach(function (e) {
+    var s = e.s, ded = s.regimen === 151 && RT.last.sueldo > 0;
+    if (escs.length > 1) h += '<div class="rt-col-title" style="padding:10px 12px 0">' + e.t + '</div>';
+    h += '<table class="rt-tabla"><thead><tr><th>Edad</th><th>Aportas en el año</th><th>Total aportado</th><th>Rendimiento + bono</th><th>Saldo estimado</th>' + (ded ? '<th>Te regresa el SAT ese año</th>' : '') + '</tr></thead><tbody>';
+    s.anios.forEach(function (a, i) {
+      h += '<tr' + (i === s.anios.length - 1 ? ' class="fin"' : '') + '><td>' + a.edad + '</td><td>' + rtFmt(a.aporteAnio) + '</td><td>' + rtFmt(a.aportado) + '</td><td>' + rtFmt(a.saldo - a.aportado) + '</td><td>' + rtFmt(a.saldo) + '</td>' + (ded ? '<td>' + rtFmt(a.recup) + '</td>' : '') + '</tr>';
+    });
+    h += '</tbody></table>';
+  });
+  w.innerHTML = h;
 }
 
 function rtChart(s) {
@@ -6336,13 +6419,27 @@ function rtDiag(edad, retiro, mayor) {
   var key = edad + '-' + retiro; if (RT.diagShown[key]) return; RT.diagShown[key] = true;
   document.getElementById('rtDiagTxt').textContent = mayor
     ? 'Por tu edad, es importante que primero agendes un diagnóstico. Revisamos contigo las opciones que sí aplican para ti.'
-    : 'Por la cercanía de tu edad de retiro (' + (retiro - edad) + ' años), es importante que primero agendes un diagnóstico. Con plazos cortos las reglas fiscales y los rendimientos cambian, y queremos ofrecerte la opción correcta.';
+    : 'Tu tiempo de inversión sería de ' + (retiro - edad) + ' años. Puedes continuar con tu simulación, pero por la cercanía a tu pensión te sugiero agendar una cita para revisar contigo la mejor opción. ¿Quieres agendarla?';
   document.getElementById('rtDiagModal').classList.add('show');
 }
 
 function rtAgenda() {
   document.getElementById('rtDiagModal').classList.remove('show');
   try { showModule('agenda'); } catch (e) { window.open(RT_CFG.CALENDLY, '_blank'); }
+}
+
+function rtAgendaPrellenada(data, folio) {
+  var nota = 'Plan de retiro · Ya envié mi solicitud y mis documentos (folio ' + folio + '). Aportación ' + rtFmt(RT.last.aport) + ' ' + RT_CFG.PER_TXT[RT.per] + ', retiro a los ' + (RT.tipo === 'ambas' ? '60 o 65' : RT.retiro) + '.';
+  var nombre = (data.nombre + ' ' + data.apellidos).trim();
+  try { showModule('agenda'); } catch (e) {}
+  var cont = document.querySelector('#module-agenda .calendly-inline-widget');
+  var url = RT_CFG.CALENDLY + '?name=' + encodeURIComponent(nombre) + '&email=' + encodeURIComponent(data.correo) + '&a1=' + encodeURIComponent(nota);
+  if (cont && window.Calendly && Calendly.initInlineWidget) {
+    cont.innerHTML = '';
+    Calendly.initInlineWidget({ url: RT_CFG.CALENDLY, parentElement: cont, prefill: { name: nombre, email: data.correo, customAnswers: { a1: nota } } });
+  } else if (cont) {
+    cont.innerHTML = '<iframe src="' + url + '&embed_type=Inline" style="width:100%;height:100%;border:0" title="Agenda"></iframe>';
+  } else { window.open(url, '_blank'); }
 }
 
 // ── Aviso de privacidad al entrar ──
@@ -6390,10 +6487,12 @@ var RT_REGLAS = {
 function rtValCampo(id) { var f = RT_REGLAS[id]; if (!f) return true; return rtSetErr(id, f(rtVal(id))); }
 
 // ── Paso 2 ──
-function rtIrPaso2() {
+function rtIrPaso2(modo) {
   if (!RT.last) return;
+  RT.modo = modo || 'ya';
+  document.getElementById('rtEnviarBtn').textContent = RT.modo === 'asesoria' ? 'Envía y agenda tu asesoría' : 'Envía tu solicitud';
   var e = RT.last.escenarios[RT.last.escenarios.length === 2 && RT.tipo === 'noded' ? 1 : 0];
-  document.getElementById('rtResumenMini').innerHTML = '<b>Tu simulación:</b> ' + rtFmt(RT.last.aport) + ' al mes · retiro a los ' + (RT.tipo === 'ambas' ? '60 o 65' : RT.retiro) + ' · ' + (RT.tipo === 'ded' ? 'deducible' : RT.tipo === 'noded' ? 'no deducible' : 'quiere comparar ambas') + ' · perfil ' + RT.perfil.toLowerCase() + ' en ' + RT.moneda.toLowerCase() + ' · saldo estimado ' + rtFmt(e.s.saldo) + '.';
+  document.getElementById('rtResumenMini').innerHTML = '<b>Tu simulación:</b> ' + rtFmt(RT.last.aport) + ' ' + RT_CFG.PER_TXT[RT.per] + ' · ' + (RT.modo === 'asesoria' ? 'quiere asesoría antes de contratar · ' : '') + 'retiro a los ' + (RT.tipo === 'ambas' ? '60 o 65' : RT.retiro) + ' · ' + (RT.tipo === 'ded' ? 'deducible' : RT.tipo === 'noded' ? 'no deducible' : 'quiere comparar ambas') + ' · perfil ' + RT.perfil.toLowerCase() + ' en ' + RT.moneda.toLowerCase() + ' · saldo estimado ' + rtFmt(e.s.saldo) + '.';
   var s2 = document.getElementById('rtSueldo2'); if (!s2.value) s2.value = document.getElementById('rtSueldo').value;
   if (!document.querySelector('#rtBenefList .rt-benef')) rtBenefAdd();
   document.getElementById('rtPaso1').style.display = 'none';
@@ -6486,8 +6585,8 @@ function rtEnviar() {
   var suma = rtBenefSum();
   mark('benef', !document.querySelector('#rtBenefList .rt-benef') ? 'Agrega al menos un beneficiario.' : (suma !== 100 ? 'Los porcentajes deben sumar 100%. Hoy suman ' + suma + '%.' : ''));
   mark('dirIne', !RT.dirIne ? 'Elige una opción.' : '');
-  mark('rtIneF', !(RT.files.rtIneF || []).length ? 'Sube la foto del frente de tu INE.' : '');
-  mark('rtIneR', !(RT.files.rtIneR || []).length ? 'Sube la foto del reverso de tu INE.' : '');
+  var hasF = (RT.files.rtIneF || []).length, hasR = (RT.files.rtIneR || []).length, hasP = (RT.files.rtInePdf || []).length;
+  mark('rtIne', hasP || (hasF && hasR) ? '' : (hasF || hasR ? 'Falta la foto del ' + (hasF ? 'reverso' : 'frente') + ' de tu INE, o sube un solo PDF con ambos lados.' : 'Sube las fotos de frente y reverso de tu INE, o un solo PDF.'));
   mark('rtCSF', !(RT.files.rtCSF || []).length ? 'Sube tu constancia (PDF o fotos de las 2 hojas).' : '');
   mark('rtComp', RT.dirIne === 'No' && !(RT.files.rtComp || []).length ? 'Sube tu comprobante de domicilio (no mayor a 3 meses).' : '');
   mark('veraz', !document.getElementById('rtVeraz').checked ? 'Marca la casilla para confirmar.' : '');
@@ -6510,9 +6609,9 @@ function rtEnviar() {
     estatura_m: rtVal('rtEstatura'), peso_kg: rtVal('rtPeso'), padecimiento_cronico: RT.pad, padecimiento_cual: rtVal('rtPadCual'),
     casado_legalmente: RT.casado, tiene_hijos: RT.hijos, beneficiarios: bens.map(function (b) { return b.nombre + ' (' + b.parentesco + ', ' + b.porcentaje + '%)'; }).join('; '),
     direccion: rtVal('rtCalle') + ', ' + rtVal('rtColonia') + ', CP ' + rtVal('rtCP') + ', ' + rtVal('rtMunicipio') + ', ' + rtVal('rtEstado'),
-    direccion_igual_ine: RT.dirIne, aportacion_mensual: L.aport, edad_retiro: RT.tipo === 'ambas' ? '60 y 65 (comparar)' : RT.retiro, plazo_anios: L.plazo,
+    direccion_igual_ine: RT.dirIne, aportacion: L.aport, periodicidad: RT_CFG.PER_NOM[RT.per], edad_retiro: RT.tipo === 'ambas' ? '60 y 65 (comparar)' : RT.retiro, plazo_anios: L.plazo,
     deducible: RT.tipo === 'ded' ? 'Deducible' : RT.tipo === 'noded' ? 'No deducible' : 'Quiere ver ambas', incremento_inflacion: RT.infl,
-    perfil: RT.perfil, moneda: RT.moneda, proyeccion: esc, aviso_privacidad_aceptado: RT.privFecha || ''
+    perfil: RT.perfil, moneda: RT.moneda, modalidad: RT.modo === 'asesoria' ? 'Quiere contratar con asesoría (agenda cita)' : 'Quiere contratar ya', proyeccion: esc, aviso_privacidad_aceptado: RT.privFecha || ''
   };
 
   // 1) Datos + documentos → Make (ruta tipo = retiro_docs → carpeta en Google Drive)
@@ -6522,7 +6621,7 @@ function rtEnviar() {
     Object.keys(data).forEach(function (k) { fd.append(k, String(data[k] == null ? '' : data[k])); });
     fd.append('beneficiarios_json', JSON.stringify(bens));
     var add = function (id, name) { (RT.files[id] || []).forEach(function (f, i) { fd.append(name + ((RT.files[id].length > 1) ? '_' + (i + 1) : ''), f, folio + '_' + name + ((RT.files[id].length > 1) ? '_' + (i + 1) : '') + '.' + (f.name.split('.').pop() || 'jpg')); }); };
-    add('rtIneF', 'ine_frente'); add('rtIneR', 'ine_reverso'); add('rtCSF', 'constancia_fiscal'); add('rtComp', 'comprobante_domicilio');
+    add('rtIneF', 'ine_frente'); add('rtIneR', 'ine_reverso'); add('rtInePdf', 'ine_pdf'); add('rtCSF', 'constancia_fiscal'); add('rtComp', 'comprobante_domicilio');
     fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', body: fd });
   } catch (e) {}
 
@@ -6530,7 +6629,7 @@ function rtEnviar() {
   var filas = Object.keys(data).map(function (k) { return '<tr><td style="padding:6px 10px;color:#888;font-size:12px">' + k.replace(/_/g, ' ') + '</td><td style="padding:6px 10px;font-weight:bold;color:#2a0c0c">' + String(data[k]).replace(/</g, '&lt;') + '</td></tr>'; }).join('');
   try {
     var fi = new FormData();
-    fi.append('subject', 'Solicitud Plan de Retiro – ' + data.nombre + ' ' + data.apellidos + ' – Folio ' + folio);
+    fi.append('subject', (RT.modo === 'asesoria' ? 'Solicitud Plan de Retiro (con asesoría) – ' : 'Solicitud Plan de Retiro – ') + data.nombre + ' ' + data.apellidos + ' – Folio ' + folio);
     fi.append('body', '<div style="font-family:Arial,sans-serif"><h2 style="color:#c8272e">Nueva solicitud · Plan de retiro</h2><p>Los documentos se guardan en la carpeta de Google Drive del folio <b>' + folio + '</b>.</p><table style="border-collapse:collapse;width:100%">' + filas + '</table></div>');
     fi.append('to', RT_CFG.CORREO_INTERNO); fi.append('tipo', 'interno'); fi.append('folio', folio);
     fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', body: fi });
@@ -6541,15 +6640,16 @@ function rtEnviar() {
     var e0 = L.escenarios[0].s;
     var fc = new FormData();
     fc.append('subject', 'Recibimos tu solicitud de Plan de Retiro – Folio ' + folio);
-    fc.append('body', '<div style="font-family:Arial,sans-serif;max-width:560px"><h2 style="color:#c8272e">¡Gracias, ' + data.nombre.split(' ')[0] + '!</h2><p>Recibimos tu solicitud de <b>Plan de retiro</b> con folio <b>' + folio + '</b>. Te contactaremos en las próximas 24 horas hábiles para revisar contigo la opción que más se adapte a tu necesidad.</p><p><b>Tu simulación:</b> ' + rtFmt(L.aport) + ' al mes, retiro a los ' + RT.retiro + '. Saldo estimado: ' + rtFmt(e0.saldo) + '.</p><p style="font-size:12px;color:#888">Proyección ilustrativa; los rendimientos no están garantizados. La propuesta final la confirma la aseguradora.</p></div>');
+    fc.append('body', '<div style="font-family:Arial,sans-serif;max-width:560px"><h2 style="color:#c8272e">¡Gracias, ' + data.nombre.split(' ')[0] + '!</h2><p>Recibimos tu solicitud de <b>Plan de retiro</b> con folio <b>' + folio + '</b>. Te contactaremos en las próximas 24 horas hábiles para revisar contigo la opción que más se adapte a tu necesidad.</p><p><b>Tu simulación:</b> ' + rtFmt(L.aport) + ' ' + RT_CFG.PER_TXT[RT.per] + ', retiro a los ' + RT.retiro + '. Saldo estimado: ' + rtFmt(e0.saldo) + '.</p><p style="font-size:12px;color:#888">Proyección ilustrativa; los rendimientos no están garantizados. La propuesta final la confirma la aseguradora.</p></div>');
     fc.append('to', data.correo); fc.append('tipo', 'confirmacion_cliente'); fc.append('folio', folio); fc.append('nombre', data.nombre);
     fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', body: fc });
   } catch (e) {}
 
+  btn.disabled = false; btn.textContent = RT.modo === 'asesoria' ? 'Envía y agenda tu asesoría' : 'Envía tu solicitud';
+  if (RT.modo === 'asesoria') { rtAgendaPrellenada(data, folio); return; }
   document.getElementById('rtFolio').textContent = 'Folio ' + folio;
   document.getElementById('rtWaBtn').href = 'https://wa.me/' + RT_CFG.WHATSAPP + '?text=' + encodeURIComponent('Hola, acabo de enviar mi solicitud de Plan de retiro ' + folio);
   document.getElementById('rtPaso2').style.display = 'none'; document.getElementById('rtPaso3').style.display = 'block';
-  btn.disabled = false; btn.textContent = 'Envía tu solicitud';
   try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (x) { window.scrollTo(0, 0); }
 }
 
